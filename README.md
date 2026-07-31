@@ -11,24 +11,6 @@ npm run typecheck  # tsc only
 npm run lint       # eslint
 ```
 
----
-
-## Design direction
-
-Modelled on [ixyis.com](https://ixyis.com): bright cream-lavender ground, one rounded
-sans with hierarchy from **weight** rather than a contrasting display face, generous
-whitespace, soft ornaments (pastel blobs and polka-dot fields sampled from Kurai's own
-cover art), an auto-looping artwork marquee, and a dense filtered gallery whose tiles
-carry **no captions or metadata**.
-
-Two things it deliberately does *not* have, because they were tried and removed:
-
-- **No dark mode.** There is one theme. Do not reintroduce `[data-theme]` selectors —
-  components rely on the token values being stable.
-- **No per-artwork routes.** The lightbox is the detail view. There is no
-  `/works/:slug`, no project summary/body/tools/client fields.
-
----
 
 ## Where things live
 
