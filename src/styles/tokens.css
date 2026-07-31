@@ -1,0 +1,192 @@
+/**
+ * Design tokens.
+ *
+ * Single light theme — there is no dark mode. Do not reintroduce
+ * `[data-theme]` selectors here; components rely on these values being stable.
+ *
+ * Two layers:
+ *   1. Palette  — raw brand hues. Never used directly in components; they carry
+ *                 no contrast guarantees.
+ *   2. Semantic — role-based tokens. Components use ONLY these.
+ *
+ * Every semantic text/background pairing is >= 4.5:1 (WCAG AA), measured against
+ * the *sunken* ground, which is the darkest surface text sits on. The raw pink
+ * and cyan sampled from Kurai's cover art are far too light to carry text, so
+ * they live in `--decor-*` and are for ornament only.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* ---------------------------------------------------------------- palette */
+  /* Warm plum, for text. */
+  --plum-900: #241531;
+  --plum-800: #3a2348;
+  --plum-600: #5b2a86;
+  --plum-500: #645271;
+  /* 4.96:1 on the sunken ground. An earlier #7a6889 measured 4.46 and failed
+     AA in the footer — the sunken surface, not the page bg, is the binding
+     constraint for every muted token. */
+  --plum-400: #736180;
+  --plum-200: #d9cce4;
+  --plum-100: #ece4f2;
+
+  /* Cream-lavender grounds. */
+  --cream-050: #ffffff;
+  --cream-100: #fbf8fd;
+  --cream-200: #f5eff8;
+  --cream-300: #ede4f3;
+
+  /* Accents sampled from the vgen cover art, darkened to clear AA. */
+  --pink-700: #a8175a;
+  --pink-600: #c21f65;
+  --pink-500: #d4266f;
+  --pink-300: #ff8fc5; /* the cover's raw pink — ornament only */
+  --pink-100: #ffd9ec;
+
+  --cyan-800: #0b6076;
+  --cyan-700: #0e7490;
+  --cyan-300: #8fdcf5; /* the cover's raw sky blue — ornament only */
+  --cyan-100: #d8f2fc;
+
+  /* ------------------------------------------------------------- typography */
+  /**
+   * One family. Hierarchy comes from weight and size, not from a contrasting
+   * display face — that is what keeps the tone pop-cute rather than editorial.
+   */
+  --font-sans: 'Outfit Variable', ui-rounded, 'Segoe UI', system-ui, sans-serif;
+  --font-display: var(--font-sans);
+
+  --text-2xs: 0.6875rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: clamp(1.0625rem, 0.99rem + 0.32vw, 1.1875rem);
+  --text-xl: clamp(1.1875rem, 1.09rem + 0.44vw, 1.375rem);
+  --text-2xl: clamp(1.375rem, 1.2rem + 0.78vw, 1.75rem);
+  --text-3xl: clamp(1.75rem, 1.44rem + 1.38vw, 2.5rem);
+  --text-4xl: clamp(2.125rem, 1.66rem + 2.07vw, 3.25rem);
+  --text-5xl: clamp(2.5rem, 1.66rem + 3.73vw, 4.5rem);
+  --text-6xl: clamp(3rem, 1.5rem + 6.67vw, 6rem);
+
+  --leading-tight: 1.1;
+  --leading-snug: 1.3;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.75;
+
+  --tracking-tighter: -0.025em;
+  --tracking-tight: -0.012em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.05em;
+  --tracking-wider: 0.12em;
+  --tracking-widest: 0.2em;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-black: 800;
+
+  /* ------------------------------------------------------------------ space */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 2.5rem;
+  --space-8: 3rem;
+  --space-9: 4rem;
+  --space-10: 5rem;
+  --space-11: 6.5rem;
+  --space-12: 8rem;
+
+  --section-y: clamp(3.5rem, 2.2rem + 5.8vw, 8rem);
+
+  /* ----------------------------------------------------------------- layout */
+  --measure: 66ch;
+  --container-max: 84rem;
+  --container-narrow: 50rem;
+  --container-pad: clamp(1.25rem, 0.7rem + 2.4vw, 3.5rem);
+  --header-h: 4.5rem;
+
+  /* ----------------------------------------------------------------- shapes */
+  /* Rounder than the previous system — soft corners carry a lot of the mood. */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-xl: 32px;
+  --radius-2xl: 44px;
+  --radius-pill: 999px;
+
+  /* ----------------------------------------------------------------- motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 150ms;
+  --duration-base: 260ms;
+  --duration-slow: 480ms;
+  --duration-slower: 800ms;
+
+  /* ------------------------------------------------------------------ layer */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 100;
+  --z-header: 200;
+  --z-overlay: 300;
+  --z-modal: 400;
+
+  /* =============================================================== SEMANTIC */
+
+  --bg: var(--cream-100);
+  --bg-sunken: var(--cream-200);
+  --surface: var(--cream-050);
+  --surface-raised: var(--cream-050);
+
+  --text: var(--plum-800); /* 12.28:1 on sunken */
+  --text-muted: var(--plum-500); /*  6.22:1 on sunken */
+  --text-subtle: var(--plum-400); /*  4.96:1 on sunken */
+  --text-inverse: var(--cream-050);
+
+  /**
+   * Text colours for the tinted chips. The accent tokens are tuned against the
+   * page grounds and are NOT dark enough on a pastel chip fill — pink-600 on
+   * pink-100 measures 4.46. These pairings are the ones to use inside `--decor-*`
+   * surfaces.
+   */
+  --on-decor-pink: var(--pink-700); /*  5.58:1 on --decor-pink-soft */
+  --on-decor-cyan: var(--cyan-800); /*  6.11:1 on --decor-cyan-soft */
+
+  --accent: var(--pink-600); /*  5.05:1 on sunken */
+  --accent-hover: var(--pink-500);
+  --accent-fill: var(--pink-600);
+  --accent-fill-hover: var(--pink-700);
+  --on-accent-fill: var(--cream-050); /*  5.71:1 */
+  --accent-alt: var(--cyan-700); /*  4.74:1 on sunken */
+  --accent-alt-strong: var(--cyan-800);
+
+  --border: color-mix(in srgb, var(--plum-800) 12%, transparent);
+  --border-strong: color-mix(in srgb, var(--plum-800) 28%, transparent);
+  --rule: color-mix(in srgb, var(--plum-800) 9%, transparent);
+
+  /* Ornament only — never place text on or in these. */
+  --decor-pink: var(--pink-300);
+  --decor-pink-soft: var(--pink-100);
+  --decor-cyan: var(--cyan-300);
+  --decor-cyan-soft: var(--cyan-100);
+  --decor-dot: color-mix(in srgb, var(--pink-300) 45%, transparent);
+
+  --focus-ring: var(--pink-600);
+
+  --shadow-sm: 0 1px 2px rgb(58 35 72 / 0.05), 0 2px 8px rgb(58 35 72 / 0.04);
+  --shadow-md: 0 4px 14px rgb(58 35 72 / 0.07), 0 12px 32px rgb(58 35 72 / 0.06);
+  --shadow-lg: 0 12px 28px rgb(58 35 72 / 0.1), 0 32px 64px rgb(58 35 72 / 0.09);
+  --shadow-art: 0 18px 40px rgb(58 35 72 / 0.16), 0 4px 12px rgb(58 35 72 / 0.08);
+
+  --scrim: linear-gradient(
+    to right,
+    rgb(251 248 253 / 0.97),
+    rgb(251 248 253 / 0.76) 46%,
+    rgb(251 248 253 / 0)
+  );
+}

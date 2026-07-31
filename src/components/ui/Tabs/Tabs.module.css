@@ -1,0 +1,79 @@
+/**
+ * Colours are exposed as custom properties rather than hard-coded tokens, so a
+ * consumer on a different ground (e.g. the always-dark gallery stage) can
+ * retheme the tabs by setting four variables instead of fighting specificity
+ * with descendant overrides.
+ */
+.list {
+  --tab-color: var(--text-subtle);
+  --tab-color-hover: var(--text);
+  --tab-color-active: var(--text);
+  --tab-indicator: var(--accent);
+  --tab-border: var(--border);
+
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.tab {
+  position: relative;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--tab-color);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.tab:hover {
+  color: var(--tab-color-hover);
+}
+
+/* ------------------------------------------------------------- underline */
+
+.underline .tab {
+  padding-block: var(--space-2);
+}
+
+.underline .tab::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 1.5px;
+  background-color: var(--tab-indicator);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.underline .tab[aria-selected='true'] {
+  color: var(--tab-color-active);
+}
+
+.underline .tab[aria-selected='true']::after {
+  transform: scaleX(1);
+}
+
+/* ------------------------------------------------------------------ pill */
+
+.pill {
+  gap: var(--space-2);
+}
+
+.pill .tab {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--tab-border);
+  border-radius: var(--radius-pill);
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+}
+
+.pill .tab[aria-selected='true'] {
+  color: var(--on-accent-fill);
+  background-color: var(--accent-fill);
+  border-color: var(--accent-fill);
+}

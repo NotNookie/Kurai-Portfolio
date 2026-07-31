@@ -1,0 +1,86 @@
+.blob {
+  position: absolute;
+  z-index: -1;
+  display: block;
+  width: calc(22rem * var(--blob-scale, 1));
+  aspect-ratio: 1;
+  border-radius: 48% 52% 41% 59% / 55% 44% 56% 45%;
+  filter: blur(6px);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------- tones */
+
+.pink {
+  background: radial-gradient(
+    circle at 35% 35%,
+    var(--decor-pink) 0%,
+    var(--decor-pink-soft) 55%,
+    transparent 72%
+  );
+}
+
+.cyan {
+  background: radial-gradient(
+    circle at 35% 35%,
+    var(--decor-cyan) 0%,
+    var(--decor-cyan-soft) 55%,
+    transparent 72%
+  );
+}
+
+.mixed {
+  background: radial-gradient(
+    circle at 30% 30%,
+    var(--decor-cyan) 0%,
+    var(--decor-pink-soft) 48%,
+    transparent 70%
+  );
+}
+
+/* -------------------------------------------------------------- placements */
+/* Deliberately bleed past the section edges; `overflow-x: hidden` on body and
+   `overflow: hidden` on sections keep them from creating scrollbars. */
+
+.top-left {
+  top: -10%;
+  left: -8%;
+}
+
+.top-right {
+  top: -12%;
+  right: -7%;
+}
+
+.bottom-left {
+  bottom: -12%;
+  left: -9%;
+}
+
+.bottom-right {
+  bottom: -10%;
+  right: -8%;
+}
+
+.center-left {
+  top: 30%;
+  left: -12%;
+}
+
+.center-right {
+  top: 26%;
+  right: -11%;
+}
+
+/* -------------------------------------------------------------------- dots */
+
+.dots {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  display: block;
+  background-image: radial-gradient(var(--decor-dot) 1.7px, transparent 1.8px);
+  background-size: var(--dot-gap, 18px) var(--dot-gap, 18px);
+  pointer-events: none;
+}

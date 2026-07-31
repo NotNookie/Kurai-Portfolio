@@ -1,0 +1,210 @@
+.page {
+  position: relative;
+  padding-block: var(--section-y);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(var(--space-6), 5vw, var(--space-10));
+  /* Centred rather than top-aligned: with no email set the intro column is
+     short, and top-aligning leaves a conspicuous void beneath it. */
+  align-items: center;
+}
+
+/* ------------------------------------------------------------------ intro */
+
+.heading {
+  font-size: var(--text-5xl);
+  font-weight: var(--weight-black);
+  letter-spacing: var(--tracking-tighter);
+  line-height: var(--leading-tight);
+  color: var(--text);
+}
+
+.introText {
+  max-width: 42ch;
+  margin-top: var(--space-5);
+  font-size: var(--text-lg);
+  line-height: var(--leading-relaxed);
+  color: var(--text-muted);
+}
+
+.direct {
+  margin-top: var(--space-7);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--rule);
+}
+
+.blockLabel {
+  margin-bottom: var(--space-4);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.email {
+  font-size: var(--text-xl);
+  color: var(--text);
+  border-bottom: 1px solid var(--border-strong);
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+.email:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ----------------------------------------------------------------- panels */
+
+.panels {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.commissionCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: clamp(var(--space-5), 3vw, var(--space-7));
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.cardHeading {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--text);
+}
+
+.cardBody {
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--text-muted);
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-muted);
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--text-subtle);
+}
+
+.statusDot[data-status='Open'] {
+  background-color: #1a8a5a;
+}
+
+.statusDot[data-status='Waitlist'] {
+  background-color: #b8860b;
+}
+
+.statusDot[data-status='Closed'] {
+  background-color: var(--text-subtle);
+}
+
+/* ---------------------------------------------------------------- socials */
+
+.socialList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border-bottom: 1px solid var(--rule);
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.socialLink:hover {
+  background-color: var(--bg-sunken);
+}
+
+.socialIcon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--text-muted);
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+.socialLink:hover .socialIcon {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.socialText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.socialLabel {
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  color: var(--text);
+}
+
+.socialHandle {
+  font-weight: var(--weight-regular);
+  color: var(--text-subtle);
+}
+
+.socialNote {
+  font-size: var(--text-sm);
+  color: var(--text-subtle);
+}
+
+.socialExternal {
+  margin-left: auto;
+  flex-shrink: 0;
+  color: var(--text-subtle);
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.socialLink:hover .socialExternal {
+  color: var(--accent);
+  transform: translate(2px, -2px);
+}
+
+/* ------------------------------------------------------------ breakpoints */
+
+@media (max-width: 56rem) {
+  .layout {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+}

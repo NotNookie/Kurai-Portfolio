@@ -1,0 +1,188 @@
+.hero {
+  position: relative;
+  padding: var(--space-5) var(--container-pad) var(--space-6);
+  isolation: isolate;
+}
+
+/**
+ * The artwork sits in a rounded frame rather than bleeding to the window edge.
+ * Softer and more "pop" than a full-bleed banner, and it keeps the cream ground
+ * visible around it so the page reads as one bright surface.
+ */
+.frame {
+  position: relative;
+  /**
+   * `isolation` is load-bearing, not cosmetic. Without a stacking context here
+   * the `z-index: -1` backdrop is painted in the section's context — i.e.
+   * *behind* this element's own background-color, which hid the cover art
+   * entirely. With it, the frame's background paints first and the backdrop
+   * layers on top of it, still beneath the card.
+   */
+  isolation: isolate;
+  max-width: 96rem;
+  margin-inline: auto;
+  min-height: min(calc(100svh - var(--header-h) - var(--space-9)), 46rem);
+  display: flex;
+  align-items: center;
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  background-color: var(--bg-sunken);
+  box-shadow: var(--shadow-md);
+}
+
+/* ---------------------------------------------------------------- backdrop */
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
+.backdropImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Her portrait sits in the right ~45% of the cover art. Biasing the crop
+     right keeps her in frame as the viewport narrows; the painted-in name and
+     handles on the left end up behind the content card, where they belong. */
+  object-position: 74% center;
+}
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--scrim);
+}
+
+/* -------------------------------------------------------------- container */
+
+.container {
+  position: relative;
+  padding-block: var(--space-8);
+}
+
+/* ------------------------------------------------------------------- card */
+
+/* The dot field inside the card sits behind the copy; keep it faint enough
+   that it never competes with body text for legibility. */
+.card > span:first-child {
+  opacity: 0.4;
+}
+
+.card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  width: min(100%, 33rem);
+  padding: clamp(var(--space-5), 3vw, var(--space-7));
+  background-color: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(18px) saturate(1.2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+}
+
+.eyebrow {
+  margin-bottom: var(--space-3);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.name {
+  margin-bottom: var(--space-5);
+  font-size: var(--text-5xl);
+  font-weight: var(--weight-black);
+  letter-spacing: var(--tracking-tighter);
+  line-height: 1;
+  color: var(--text);
+}
+
+.tabs {
+  margin-bottom: var(--space-4);
+}
+
+.panel {
+  /* Reserve the tallest panel so the card does not resize as tabs switch. */
+  min-height: 7rem;
+  margin-bottom: var(--space-5);
+}
+
+.panel:focus-visible {
+  outline-offset: 6px;
+}
+
+.panelText {
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--text-muted);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* ------------------------------------------------------------ breakpoints */
+
+@media (max-width: 48rem) {
+  /**
+   * Stacked layout. On a portrait viewport `cover` crops the sides but not the
+   * height, so her face lands dead centre — exactly where a full-width card
+   * sits. Giving the artwork its own window above the card fixes that.
+   */
+  .hero {
+    padding-inline: var(--space-3);
+  }
+
+  .frame {
+    display: block;
+    min-height: 0;
+  }
+
+  .backdrop {
+    position: relative;
+    inset: auto;
+    z-index: var(--z-base);
+    height: 46svh;
+    min-height: 15rem;
+    max-height: 24rem;
+  }
+
+  .backdropImage {
+    /* Now cropped on both axes, so vertical framing finally has an effect. */
+    object-position: 68% 26%;
+  }
+
+  .scrim {
+    background: linear-gradient(to top, var(--bg-sunken) 1%, transparent 44%);
+  }
+
+  .container {
+    position: relative;
+    z-index: var(--z-raised);
+    padding-block: 0 var(--space-6);
+    margin-top: -2.5rem;
+  }
+
+  .card {
+    width: 100%;
+  }
+
+  .name {
+    font-size: var(--text-4xl);
+  }
+
+  .panel {
+    min-height: 8rem;
+  }
+}
+
+@media (max-width: 30rem) {
+  .actions > * {
+    flex: 1 1 100%;
+  }
+}
