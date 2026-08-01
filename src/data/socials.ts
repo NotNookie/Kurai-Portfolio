@@ -45,8 +45,6 @@ export const socials: readonly SocialLink[] = [
     note: 'Live drawing streams.',
   },
   {
-    // TODO(kurai): confirm this handle — it was read off the vgen cover art,
-    // not from a link you gave me. Delete this entry if it is out of date.
     id: 'bluesky',
     label: 'Bluesky',
     handle: '@hellane.bsky.social',

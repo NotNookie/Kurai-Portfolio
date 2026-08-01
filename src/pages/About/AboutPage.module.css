@@ -1,44 +1,73 @@
 .page {
   position: relative;
   padding-block: var(--section-y);
+  /* The ornament blobs bleed past their boxes. */
   overflow: hidden;
   isolation: isolate;
 }
 
-.pageHeading {
-  margin-bottom: var(--space-8);
+/* ------------------------------------------------------------------ intro */
+
+.intro {
+  position: relative;
+  margin-bottom: clamp(var(--space-7), 5vw, var(--space-10));
+}
+
+.eyebrow {
+  margin-bottom: var(--space-4);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* The lede is the page's headline, so it carries the display size. */
+.lede {
+  max-width: 20ch;
   font-size: var(--text-5xl);
-  font-weight: var(--weight-bold);
+  font-weight: var(--weight-black);
+  line-height: 1.05;
   letter-spacing: var(--tracking-tighter);
   color: var(--text);
 }
 
+/* ----------------------------------------------------------------- layout */
+
 .layout {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 19rem) minmax(0, 1fr);
-  gap: clamp(var(--space-6), 5vw, var(--space-10));
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(var(--space-5), 3.5vw, var(--space-8));
   align-items: start;
 }
 
-/* ------------------------------------------------------------------ aside */
-
-.aside {
-  position: sticky;
-  top: calc(var(--header-h) + var(--space-6));
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
+/**
+ * Shared surface: a thick white edge and a real drop shadow, so a block reads
+ * as distinct against the cream ground — `--surface` is #FFFFFF on #FBF8FD,
+ * about a 1% difference, so fill alone does nothing.
+ *
+ * No rotation and no hover state: these are not interactive, and hover on
+ * non-interactive elements is noise.
+ */
+.card {
+  border: 5px solid var(--surface);
+  border-radius: var(--radius-xl);
+  background-color: var(--surface);
+  box-shadow: var(--shadow-lg);
 }
 
-.portraitFrame {
+/* --------------------------------------------------------------- portrait */
+
+.portraitCard {
+  composes: card;
+
   position: relative;
-  isolation: isolate;
-  aspect-ratio: 1;
-  border-radius: var(--radius-2xl);
   overflow: hidden;
-  border: 3px solid var(--surface);
-  background-color: var(--surface);
-  box-shadow: var(--shadow-md);
+  grid-column: 1 / span 4;
+  grid-row: 1;
+  margin: 0;
+  aspect-ratio: 1;
 }
 
 .portrait {
@@ -47,29 +76,64 @@
   object-fit: cover;
 }
 
-.portraitFrame > span {
-  z-index: var(--z-raised);
-  opacity: 0.3;
-  mix-blend-mode: multiply;
-}
+/* ----------------------------------------------------------------- bubble */
 
-.factList {
+/**
+ * Speech bubble, echoing the lettering bubbles painted into her cover art.
+ * The tail is a rotated square sharing the bubble's fill and two of its
+ * borders, which keeps the join seamless at any size.
+ */
+.bubble {
+  position: relative;
+  grid-column: 6 / span 7;
+  grid-row: 1;
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  padding: var(--space-5);
-  border-radius: var(--radius-lg);
+  padding: clamp(var(--space-5), 3vw, var(--space-7));
   background-color: var(--surface);
-  border: 1px solid var(--border);
+  border: 2px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-md);
 }
 
-.factRow {
+.bubble::before {
+  content: '';
+  position: absolute;
+  top: 3.25rem;
+  left: -0.85rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: var(--surface);
+  border-left: 2px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  border-bottom: 2px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  border-bottom-left-radius: 5px;
+  rotate: 45deg;
+}
+
+.paragraph {
+  max-width: 62ch;
+  font-size: var(--text-lg);
+  line-height: var(--leading-relaxed);
+  color: var(--text-muted);
+}
+
+/* ------------------------------------------------------------ status card */
+
+.statusCard {
+  composes: card;
+
+  grid-column: 1 / span 4;
+  grid-row: 2;
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  background-color: color-mix(in srgb, var(--decor-cyan-soft) 60%, var(--surface));
 }
 
-.factLabel {
+.statusLabel {
   font-size: var(--text-2xs);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-wider);
@@ -77,68 +141,42 @@
   color: var(--text-subtle);
 }
 
-.factValue {
+.statusValue {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin: 0;
-  font-size: var(--text-base);
-  font-weight: var(--weight-medium);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
   color: var(--text);
 }
 
 .statusDot {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background-color: var(--text-subtle);
 }
 
 .statusDot[data-status='Open'] {
-  background-color: #1a8a5a;
+  background-color: var(--status-open);
 }
 
 .statusDot[data-status='Waitlist'] {
-  background-color: #b8860b;
+  background-color: var(--status-waitlist);
 }
 
-.asideCta {
-  align-self: flex-start;
+.cta {
+  margin-top: var(--space-3);
 }
 
-/* ------------------------------------------------------------------- body */
+/* ------------------------------------------------------------------ focus */
 
-.body {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-5);
-  max-width: var(--measure);
+.focus {
+  grid-column: 6 / span 7;
+  grid-row: 2;
 }
 
-.lede {
-  font-size: var(--text-3xl);
-  font-weight: var(--weight-semibold);
-  line-height: var(--leading-snug);
-  letter-spacing: var(--tracking-tight);
-  color: var(--text);
-}
-
-.paragraph {
-  font-size: var(--text-lg);
-  line-height: var(--leading-relaxed);
-  color: var(--text-muted);
-}
-
-.lists {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
-  gap: var(--space-6);
-  margin-top: var(--space-4);
-  padding-top: var(--space-6);
-  border-top: 1px solid var(--rule);
-}
-
-.listHeading {
+.focusHeading {
   margin-bottom: var(--space-4);
   font-size: var(--text-2xs);
   font-weight: var(--weight-semibold);
@@ -150,37 +188,59 @@
 .chips {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2);
+  gap: var(--space-3);
   margin: 0;
 }
 
-.chipPink,
-.chipCyan {
-  padding: var(--space-2) var(--space-4);
+.chip {
+  padding: var(--space-3) var(--space-5);
   border-radius: var(--radius-pill);
-  font-size: var(--text-xs);
-  font-weight: var(--weight-semibold);
-}
-
-.chipPink {
   background-color: var(--decor-pink-soft);
+  border: 2px solid var(--surface);
+  box-shadow: var(--shadow-sm);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
   color: var(--on-decor-pink);
-}
-
-.chipCyan {
-  background-color: var(--decor-cyan-soft);
-  color: var(--on-decor-cyan);
 }
 
 /* ------------------------------------------------------------ breakpoints */
 
-@media (max-width: 56rem) {
-  .layout {
-    grid-template-columns: 1fr;
+@media (max-width: 62rem) {
+  .portraitCard,
+  .statusCard {
+    grid-column: 1 / span 5;
   }
 
-  .aside {
-    position: static;
-    max-width: 21rem;
+  .bubble,
+  .focus {
+    grid-column: 6 / span 7;
+  }
+}
+
+@media (max-width: 48rem) {
+  .layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-7);
+  }
+
+  .portraitCard {
+    align-self: center;
+    width: min(100%, 17rem);
+  }
+
+  /* The tail points up at the portrait once the layout stacks. */
+  .bubble::before {
+    top: -0.85rem;
+    left: 3rem;
+    border-left: 2px solid color-mix(in srgb, var(--accent) 22%, transparent);
+    border-bottom: none;
+    border-top: 2px solid color-mix(in srgb, var(--accent) 22%, transparent);
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 5px;
+  }
+
+  .statusCard {
+    align-self: stretch;
   }
 }

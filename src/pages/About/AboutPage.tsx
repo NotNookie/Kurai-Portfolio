@@ -3,105 +3,94 @@ import { pages, site } from '@/data/site'
 import { primarySocial } from '@/data/socials'
 import { useDocumentTitle } from '@/hooks/useDocumentTitle'
 import { Button, Container } from '@/components/ui'
-import { Blob, DotField } from '@/components/ui/Ornament/Ornament'
+import { Blob } from '@/components/ui/Ornament/Ornament'
 import portraitImage from '@/assets/kuraiPfp.png'
 import styles from './AboutPage.module.css'
 
+/**
+ * About.
+ *
+ * The lede carries the page rather than a generic "About" heading, and the bio
+ * sits in a speech bubble echoing the lettering bubbles painted into Kurai's
+ * own cover art.
+ *
+ * Everything is set straight. An earlier version tilted the blocks like
+ * scrapbook stickers and scattered artwork thumbnails through the layout; both
+ * read as off rather than playful, so the composition now relies on the bubble
+ * shape and the ornaments alone.
+ */
 export function AboutPage() {
   useDocumentTitle(pages.about.title)
   const reduceMotion = useReducedMotion()
 
+  const rise = (delay: number) => ({
+    initial: { opacity: 0, y: reduceMotion ? 0 : 22 },
+    animate: { opacity: 1, y: 0 },
+    transition: {
+      duration: reduceMotion ? 0 : 0.55,
+      delay: reduceMotion ? 0 : delay,
+      ease: [0.16, 1, 0.3, 1] as const,
+    },
+  })
+
   return (
     <div className={styles.page}>
-      <Blob tone="pink" placement="top-right" scale={1.4} />
-      <Blob tone="cyan" placement="bottom-left" scale={1.1} />
+      <Blob tone="cyan" placement="top-right" scale={1.5} />
+      <Blob tone="pink" placement="bottom-left" scale={1.3} />
 
       <Container>
-        <h1 className={styles.pageHeading}>{pages.about.heading}</h1>
+        <motion.header className={styles.intro} {...rise(0)}>
+          {/* The label steps back so the lede can be the page's voice. */}
+          <p className={styles.eyebrow}>{pages.about.heading}</p>
+          <h1 className={styles.lede}>{pages.about.lede}</h1>
+        </motion.header>
 
         <div className={styles.layout}>
-          <motion.div
-            className={styles.aside}
-            initial={{ opacity: 0, y: reduceMotion ? 0 : 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: reduceMotion ? 0 : 0.55, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className={styles.portraitFrame}>
-              <img
-                src={portraitImage}
-                alt={`Chibi avatar of ${site.name}.`}
-                className={styles.portrait}
-                loading="eager"
-                decoding="async"
-              />
-              <DotField gap={16} />
-            </div>
+          <motion.figure className={styles.portraitCard} {...rise(0.06)}>
+            <img
+              src={portraitImage}
+              alt={`Chibi avatar of ${site.name}.`}
+              className={styles.portrait}
+              loading="eager"
+              decoding="async"
+            />
+          </motion.figure>
 
-            <dl className={styles.factList}>
-              <div className={styles.factRow}>
-                <dt className={styles.factLabel}>Role</dt>
-                <dd className={styles.factValue}>{site.role}</dd>
-              </div>
-              <div className={styles.factRow}>
-                <dt className={styles.factLabel}>Commissions</dt>
-                <dd className={styles.factValue}>
-                  <span
-                    className={styles.statusDot}
-                    data-status={site.commissionStatus}
-                    aria-hidden="true"
-                  />
-                  {site.commissionStatus}
-                </dd>
-              </div>
-            </dl>
-
-            <Button href={primarySocial.href} variant="solid" withArrow className={styles.asideCta}>
-              Commission on {primarySocial.label}
-            </Button>
-          </motion.div>
-
-          <motion.div
-            className={styles.body}
-            initial={{ opacity: 0, y: reduceMotion ? 0 : 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: reduceMotion ? 0 : 0.55, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <p className={styles.lede}>{pages.about.lede}</p>
-
+          <motion.div className={styles.bubble} {...rise(0.12)}>
             {pages.about.body.map((paragraph) => (
               <p key={paragraph} className={styles.paragraph}>
                 {paragraph}
               </p>
             ))}
-
-            <div className={styles.lists}>
-              <section aria-labelledby="about-focus">
-                <h2 id="about-focus" className={styles.listHeading}>
-                  {pages.about.focusHeading}
-                </h2>
-                <ul className={styles.chips} role="list">
-                  {pages.about.focus.map((item) => (
-                    <li key={item} className={styles.chipPink}>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </section>
-
-              <section aria-labelledby="about-toolkit">
-                <h2 id="about-toolkit" className={styles.listHeading}>
-                  {pages.about.toolkitHeading}
-                </h2>
-                <ul className={styles.chips} role="list">
-                  {pages.about.toolkit.map((item) => (
-                    <li key={item} className={styles.chipCyan}>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            </div>
           </motion.div>
+
+          <motion.div className={styles.statusCard} {...rise(0.18)}>
+            <p className={styles.statusLabel}>Commissions</p>
+            <p className={styles.statusValue}>
+              <span
+                className={styles.statusDot}
+                data-status={site.commissionStatus}
+                aria-hidden="true"
+              />
+              {site.commissionStatus}
+            </p>
+            <Button href={primarySocial.href} variant="solid" withArrow className={styles.cta}>
+              Commission on {primarySocial.label}
+            </Button>
+          </motion.div>
+
+          <motion.section className={styles.focus} aria-labelledby="about-focus" {...rise(0.24)}>
+            <h2 id="about-focus" className={styles.focusHeading}>
+              {pages.about.focusHeading}
+            </h2>
+            <ul className={styles.chips} role="list">
+              {pages.about.focus.map((item) => (
+                <li key={item} className={styles.chip}>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </motion.section>
         </div>
       </Container>
     </div>

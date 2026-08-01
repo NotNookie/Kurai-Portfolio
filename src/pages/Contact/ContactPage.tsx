@@ -3,14 +3,19 @@ import { pages, site } from '@/data/site'
 import { primarySocial, socialsFor } from '@/data/socials'
 import { useDocumentTitle } from '@/hooks/useDocumentTitle'
 import { Button, Container, Icon } from '@/components/ui'
-import { Blob } from '@/components/ui/Ornament/Ornament'
+import { Blob, DotField } from '@/components/ui/Ornament/Ornament'
 import styles from './ContactPage.module.css'
 
 /**
- * Contact page — links only, no form.
+ * Contact — links only, no form.
  *
  * Commissions route to VGen, which is where slots, pricing, and terms actually
  * live; duplicating them here would guarantee they go stale.
+ *
+ * Hierarchy is the point of this layout. An earlier version made every surface
+ * bare, which read as flat: the commission call to action looked exactly like
+ * the list of social links beside it. Now exactly one element is a filled panel
+ * — the thing the page exists for — and everything else stays bare.
  */
 export function ContactPage() {
   useDocumentTitle(pages.contact.title)
@@ -30,11 +35,14 @@ export function ContactPage() {
 
   return (
     <div className={styles.page}>
+      <DotField gap={24} />
       <Blob tone="pink" placement="top-right" scale={1.3} />
       <Blob tone="cyan" placement="bottom-left" scale={1.1} />
 
       <Container className={styles.layout}>
         <motion.div className={styles.intro} {...fade(0)}>
+          {/* Mirrors the About page: small label, statement as the heading. */}
+          <p className={styles.eyebrow}>{pages.contact.eyebrow}</p>
           <h1 className={styles.heading}>{pages.contact.heading}</h1>
           <p className={styles.introText}>{pages.contact.intro}</p>
 
@@ -49,15 +57,24 @@ export function ContactPage() {
         </motion.div>
 
         <motion.div className={styles.panels} {...fade(0.1)}>
-          <section className={styles.commissionCard} aria-labelledby="contact-commissions">
-            <h2 id="contact-commissions" className={styles.cardHeading}>
-              {pages.contact.commissionsHeading}
-            </h2>
-            <p className={styles.cardBody}>{pages.contact.commissionsBody}</p>
-            <p className={styles.status}>
-              <span className={styles.statusDot} data-status={site.commissionStatus} aria-hidden="true" />
-              Status: {site.commissionStatus}
-            </p>
+          {/* The one filled surface on the page. */}
+          <section className={styles.commissionPanel} aria-labelledby="contact-commissions">
+            <div className={styles.panelHead}>
+              <h2 id="contact-commissions" className={styles.panelLabel}>
+                {pages.contact.commissionsHeading}
+              </h2>
+              <p className={styles.status}>
+                <span
+                  className={styles.statusDot}
+                  data-status={site.commissionStatus}
+                  aria-hidden="true"
+                />
+                {site.commissionStatus}
+              </p>
+            </div>
+
+            <p className={styles.panelBody}>{pages.contact.commissionsBody}</p>
+
             <Button href={primarySocial.href} variant="solid" size="lg" withArrow>
               Commission on {primarySocial.label}
             </Button>

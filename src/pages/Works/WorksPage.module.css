@@ -33,7 +33,7 @@
  */
 
 .grid {
-  columns: 4 15rem;
+  columns: var(--grid-columns, 4) 15rem;
   column-gap: var(--space-4);
   margin: 0;
 }

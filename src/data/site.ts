@@ -21,11 +21,10 @@ import type { NavItem } from '@/types/content'
 export const site = {
   name: 'Hellane Kurai',
   shortName: 'Kurai',
-  // TODO(kurai): your one-line professional descriptor.
-  role: 'Illustrator & Character Designer',
+  role: 'Portfolio',
   // TODO(kurai): ~150 characters, used for search results and link previews.
   description:
-    'Portfolio of Hellane Kurai — character design and illustration work, plus commission information.',
+    'Portfolio of Hellane Kurai — Commission information and Socials.',
   /** Set once the domain is live; used for canonical and share URLs. */
   url: '',
   // TODO(kurai): public contact address, or leave null to hide it entirely.
@@ -89,7 +88,7 @@ export const pages = {
       'Replace this paragraph with the kind of work you take on, and anything a prospective client should know before reaching out.',
     ],
     // TODO(kurai): your actual tools — delete any you do not use.
-    toolkit: ['Clip Studio Paint', 'Photoshop', 'Procreate'],
+    toolkit: ['Krita', 'Aseprite'],
     // TODO(kurai): delete this block entirely if you would rather not list one.
     focus: ['Character design', 'Portrait commissions', 'Reference sheets', 'Emotes'],
     focusHeading: 'What I take on',
@@ -97,13 +96,15 @@ export const pages = {
   },
   contact: {
     title: 'Contact',
-    heading: "Let's create something.",
+    /* Small label above the headline, matching the About page's pattern. */
+    eyebrow: 'Contact',
+    heading: "Let's Create Something",
     // TODO(kurai): adjust if your turnaround expectation differs.
     intro:
       'Whether you are interested in a commission, a collaboration, or simply want to say hello — the fastest way to reach me is through the links below.',
     commissionsHeading: 'Commissions',
     commissionsBody:
-      'Slots, pricing, and terms of service live on VGen and are always current.',
+      'Slots, pricing, and terms of service live on VGen.',
     elsewhereHeading: 'Elsewhere',
     directHeading: 'Direct inquiries',
   },
@@ -128,7 +129,7 @@ export const home = {
   },
   contactTeaser: {
     eyebrow: 'Contact',
-    heading: "Let's create something.",
+    heading: "Bring Your Characters to Life",
     cta: 'Get in touch',
   },
 } as const

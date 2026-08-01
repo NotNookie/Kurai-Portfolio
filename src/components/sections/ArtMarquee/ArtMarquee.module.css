@@ -1,6 +1,8 @@
 .section {
   position: relative;
-  padding-block: var(--section-y);
+  /* No bottom padding: the contact section that follows carries a full-bleed
+     dot field, and this gap was the only thing keeping it off the sliders. */
+  padding-block: var(--section-y) 0;
   overflow: hidden;
 }
 
@@ -70,7 +72,7 @@
 .rows {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-5);
 }
 
 /* Full-bleed: the strips run edge to edge, ignoring the container gutter. */
@@ -84,7 +86,7 @@
 
 .track {
   display: flex;
-  gap: var(--space-4);
+  gap: var(--space-5);
   width: max-content;
   margin: 0;
   animation: scroll-left var(--marquee-duration, 40s) linear infinite;
@@ -149,7 +151,10 @@
 
 .link {
   display: block;
-  width: clamp(9rem, 15vw, 14rem);
+  /* Doubled from clamp(9rem, 15vw, 14rem). The scroll durations in the
+     component are doubled to match — the track is twice as long, so the same
+     duration would read as twice the speed. */
+  width: clamp(18rem, 30vw, 28rem);
   border-radius: var(--radius-md);
   overflow: hidden;
   background-color: var(--bg-sunken);

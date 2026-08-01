@@ -54,7 +54,20 @@ export function WorksPage() {
         {artworks.length === 0 ? (
           <p className={styles.empty}>{pages.works.emptyMessage}</p>
         ) : (
-          <ul className={styles.grid} role="list">
+          // Column count is capped so every column holds at least two pieces.
+          // CSS multi-column balances by height, so a small collection spread
+          // across four columns stranded single items and left an obvious hole:
+          // six pieces produced a full first row, then two orphans in columns
+          // one and four. Resolves to four columns from eight pieces up.
+          <ul
+            className={styles.grid}
+            role="list"
+            style={
+              {
+                '--grid-columns': Math.max(1, Math.min(4, Math.floor(artworks.length / 2))),
+              } as React.CSSProperties
+            }
+          >
             {artworks.map((artwork, index) => (
               <ArtworkTile
                 key={artwork.slug}

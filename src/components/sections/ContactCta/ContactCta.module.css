@@ -7,13 +7,14 @@
   padding-block: var(--section-y);
 }
 
+/* The dot field is the section's first child and spans it edge to edge. */
+.section > span:first-of-type {
+  opacity: 0.4;
+}
+
 .panel {
   position: relative;
   padding-block: clamp(var(--space-6), 4vw, var(--space-9));
-}
-
-.panel > span:first-child {
-  opacity: 0.4;
 }
 
 .inner {

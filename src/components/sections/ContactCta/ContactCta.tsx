@@ -11,6 +11,13 @@ export function ContactCta() {
 
   return (
     <section className={styles.section} aria-labelledby="contact-cta">
+      {/* Ornaments sit on the section, not inside the container, so the dot
+          field covers the full width and height of the section rather than
+          being boxed in by the container's max-width and gutters. */}
+      <DotField gap={22} />
+      <Blob tone="pink" placement="top-left" scale={1.1} />
+      <Blob tone="cyan" placement="bottom-right" scale={1.1} />
+
       <Container>
         <motion.div
           className={styles.panel}
@@ -19,10 +26,6 @@ export function ContactCta() {
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: reduceMotion ? 0 : 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
-          <DotField gap={22} />
-          <Blob tone="pink" placement="top-left" scale={0.9} />
-          <Blob tone="cyan" placement="bottom-right" scale={0.9} />
-
           <div className={styles.inner}>
             <p className={styles.eyebrow}>{home.contactTeaser.eyebrow}</p>
             <h2 id="contact-cta" className={styles.heading}>
