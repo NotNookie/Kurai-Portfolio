@@ -57,29 +57,29 @@
   border-color: var(--accent-fill);
 }
 
-.cta:hover svg {
-  transform: translateX(2px);
-}
-
 .cta svg {
   transition: transform var(--duration-base) var(--ease-out);
 }
 
-/* --------------------------------------------------------------- viewport */
-/* Full-bleed: the strip runs edge to edge, ignoring the container gutter. */
+.cta:hover svg {
+  transform: translateX(2px);
+}
 
+/* ------------------------------------------------------------------- rows */
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Full-bleed: the strips run edge to edge, ignoring the container gutter. */
 .viewport {
   position: relative;
   width: 100%;
   overflow: hidden;
-  /* Fade the strip out at both ends so it reads as continuous. */
-  mask-image: linear-gradient(
-    to right,
-    transparent,
-    #000 6%,
-    #000 94%,
-    transparent
-  );
+  /* Fade both ends so each row reads as continuous rather than cut off. */
+  mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
 }
 
 .track {
@@ -87,18 +87,26 @@
   gap: var(--space-4);
   width: max-content;
   margin: 0;
-  padding-block: var(--space-2);
-  animation: scroll var(--marquee-duration, 40s) linear infinite;
+  animation: scroll-left var(--marquee-duration, 40s) linear infinite;
 }
 
-/* Pause on hover and while any card inside has keyboard focus, so a visitor
-   can actually aim at a piece. */
-.viewport:hover .track,
+.viewport[data-direction='right'] .track {
+  animation-name: scroll-right;
+}
+
+/**
+ * Note: no `:hover` pause. The rows keep moving while the pointer is over
+ * them, by request.
+ *
+ * `:focus-within` is a separate concern and is kept — without it a keyboard
+ * user tabbing into a moving strip has the focused tile slide out from under
+ * them, which makes the row impossible to operate.
+ */
 .track:focus-within {
   animation-play-state: paused;
 }
 
-@keyframes scroll {
+@keyframes scroll-left {
   from {
     transform: translate3d(0, 0, 0);
   }
@@ -108,7 +116,16 @@
   }
 }
 
-/* Reduced motion: no animation, no duplicate track — a plain scrollable row. */
+@keyframes scroll-right {
+  from {
+    transform: translate3d(-50%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Reduced motion: no animation, no duplicate track — plain scrollable rows. */
 .viewport[data-static] {
   overflow-x: auto;
   padding-inline: var(--container-pad);
@@ -132,7 +149,7 @@
 
 .link {
   display: block;
-  width: clamp(11rem, 20vw, 17rem);
+  width: clamp(9rem, 15vw, 14rem);
   border-radius: var(--radius-md);
   overflow: hidden;
   background-color: var(--bg-sunken);

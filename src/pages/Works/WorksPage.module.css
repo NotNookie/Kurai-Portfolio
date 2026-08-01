@@ -1,0 +1,53 @@
+.page {
+  position: relative;
+  padding-block: var(--section-y);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.header {
+  margin-bottom: var(--space-7);
+}
+
+.heading {
+  font-size: var(--text-5xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tighter);
+  color: var(--text);
+}
+
+.intro {
+  max-width: 44ch;
+  margin-top: var(--space-3);
+  font-size: var(--text-lg);
+  color: var(--text-muted);
+}
+
+/* ------------------------------------------------------------------- grid */
+/**
+ * Masonry via CSS multi-column. Artwork ratios vary and nothing is cropped, so
+ * a row-based grid would leave a hole under every short piece.
+ *
+ * Tradeoff: visual order is column-major. DOM order stays newest-first, so
+ * screen readers and keyboard tabbing are unaffected.
+ */
+
+.grid {
+  columns: 4 15rem;
+  column-gap: var(--space-4);
+  margin: 0;
+}
+
+.empty {
+  padding-block: var(--space-10);
+  text-align: center;
+  font-size: var(--text-lg);
+  color: var(--text-subtle);
+}
+
+@media (max-width: 40rem) {
+  .grid {
+    columns: 2 8rem;
+    column-gap: var(--space-3);
+  }
+}

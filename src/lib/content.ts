@@ -1,5 +1,5 @@
 import { artworks } from '@/data/artworks'
-import { CATEGORY_LABELS, type Artwork, type ArtworkCategory } from '@/types/content'
+import type { Artwork } from '@/types/content'
 
 /**
  * Read-only selectors over the content layer.
@@ -21,14 +21,6 @@ export const getFeatured = (limit = 12): readonly Artwork[] =>
 
 export const getArtworkBySlug = (slug: string): Artwork | undefined =>
   artworks.find((art) => art.slug === slug)
-
-/** Categories actually present in the data, for the hashtag filter row. */
-export const getUsedCategories = (): readonly { id: ArtworkCategory; label: string }[] => {
-  const present = new Set(artworks.map((art) => art.category))
-  return (Object.keys(CATEGORY_LABELS) as ArtworkCategory[])
-    .filter((id) => present.has(id))
-    .map((id) => ({ id, label: CATEGORY_LABELS[id] }))
-}
 
 /** Index within a given list, for opening the lightbox at the right piece. */
 export const indexOfSlug = (list: readonly Artwork[], slug: string | null): number => {

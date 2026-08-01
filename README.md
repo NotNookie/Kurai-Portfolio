@@ -35,8 +35,8 @@ src/
     ui/                    Button, Container, Icon, Ornament, Tabs
     art/                   ArtImage, ArtworkTile, ArtworkLightbox
     layout/                Header, Footer, RootLayout, RouteError, RouteFallback
-    sections/              Hero, ArtMarquee, AboutTeaser, ContactCta
-  pages/                   Home, Gallery, About, Contact, NotFound
+    sections/              Hero, ArtMarquee, ContactCta
+  pages/                   Home, Works, About, Contact, NotFound
   routes.tsx               route table (all pages except Home are code-split)
 ```
 
@@ -50,16 +50,21 @@ any string, or swapping the whole data layer for a CMS, touches no component.
 
 | Path | What it is |
 | --- | --- |
-| `/` | Hero → auto-looping marquee → about teaser → contact CTA |
-| `/illustrations` | The gallery. `?category=` filters, `?piece=` opens the lightbox |
+| `/` | Hero → three scrolling artwork rows → contact CTA |
+| `/works` | The gallery. `?piece=` opens the fullscreen viewer |
+| `/illustrations` | Permanent redirect to `/works`, query string preserved |
 | `/about` | Bio |
 | `/contact` | Links only — commissions route to VGen |
 | anything else | 404 |
 
-Both the filter and the open artwork live in the query string, so a filtered view and
-an individual piece are each a shareable URL that survives a refresh and works with the
-back button. The lightbox pages through the *filtered* list, so arrowing never jumps to
-something the visitor has filtered out.
+The open artwork lives in the query string, so an individual piece is a shareable URL
+that survives a refresh and works with the back button.
+
+**There are no category filters and no tags.** The grid shows artwork only — no titles,
+no captions, no categories — and the viewer shows just the title and year. `category`,
+`description` and `eyebrow` are still on the `Artwork` type and still filled in; they
+are simply not rendered anywhere, so re-enabling any of them is a UI change with no data
+migration.
 
 ---
 
@@ -72,7 +77,9 @@ something the visitor has filtered out.
 4. `aspect` must match the real image ratio (`'3 / 4'`, `'16 / 9'`, …). It reserves the
    tile before the file loads, which is what keeps the masonry from jumping.
 5. `alt` describes what is depicted; never just repeat the title.
-6. `featured: true` puts the piece in the home-page marquee.
+6. `featured: true` puts the piece in the home-page scrolling rows.
+7. `category`, `description` and `eyebrow` are currently unused by the UI — fill them in
+   or leave them, nothing renders them today.
 7. `variants` is optional — supply it only for genuine alternate art. The tabs hide
    themselves when it is absent.
 
@@ -161,10 +168,36 @@ Ornaments (`Blob`, `DotField`) are `aria-hidden` and `pointer-events: none`. The
 absolutely positioned and bleed past section edges, which is why `body` sets
 `overflow-x: hidden` and ornamented sections set `overflow: hidden; isolation: isolate`.
 
-**Watch the stacking contexts.** Ornaments and the hero backdrop sit at `z-index: -1`.
-An ancestor with a `background-color` must also establish a stacking context
-(`isolation: isolate`), or the negative-z child paints *behind that background* and
-disappears. This is exactly what hid the hero cover art during development.
+**Watch the stacking contexts.** This has bitten twice:
+
+- Ornaments and the hero backdrop sit at `z-index: -1`. An ancestor with a
+  `background-color` must also establish a stacking context (`isolation: isolate`), or
+  the negative-z child paints *behind that background* and disappears. This is what hid
+  the hero cover art during development.
+- Conversely, `isolation: isolate` on the gallery page (needed for its blobs) **scopes**
+  any descendant `z-index`. A fixed-position overlay rendered inside it cannot escape,
+  and the sticky header painted straight over the "fullscreen" viewer. The fix is a
+  portal to `document.body`, which is why `ArtworkLightbox` uses `createPortal`.
+
+**Text over artwork cannot be audited by axe.** It skips contrast checks when it cannot
+resolve a background colour, so the hero — where the copy sits directly on her cover art
+with no card — is invisible to the audit. Verifying it means sampling the rendered
+pixels behind the actual glyph rects (a `Range` over the text node; the `<p>` box is far
+wider than its text and will lie to you). Doing that caught the body copy at 2.2:1 and
+the eyebrow at 1.8:1 over her dark hair. Two things follow:
+
+- The hero scrim's gradient stops are tuned by measurement, not by eye, and the ramp
+  shifts right below `68rem` — the copy column is a fixed `34rem` while the scrim is a
+  percentage of the viewport, so narrower windows push text past the washed band.
+- The hero body copy uses `--text`, not `--text-muted`. Muted ink does not survive
+  sitting on artwork.
+
+**Sizing inside the viewer.** `max-height: 100%` on a centred grid item does not
+reliably resolve against the padded grid area — Chrome sized the artwork from
+`max-width` and let it run under the overlaid bars. The viewer therefore reserves chrome
+space with `--viewer-top` / `--viewer-bottom` custom properties, used both for the
+stage's padding and for a `calc()` cap on the image against `100dvh`. Change them
+together or the artwork will collide with the bars.
 
 ---
 
@@ -173,16 +206,21 @@ disappears. This is exactly what hid the hero cover art during development.
 Verified with axe-core across all routes at 1280px and 430px: **0 violations.**
 
 - Skip link, one `<h1>` per page, heading levels never skip
-- The lightbox is a real modal dialog: focus moves in on open, is trapped across Tab,
-  and returns to the tile that opened it; Escape closes; background scroll is locked
+- The fullscreen viewer is a real modal dialog: focus moves in on open, is trapped
+  across Tab, and returns to the tile that opened it; Escape closes; background scroll
+  is locked. It renders through a portal to `document.body` — see the stacking note
+  below for why that is load-bearing rather than stylistic
 - The thumbnail rail and variant tabs are WAI-ARIA tabs with roving focus
 - Gallery tiles show no visible text, so each button takes its accessible name from a
   visually-hidden `"{title} — Open in viewer"`
 - Route changes announce the new document title through a live region
 - `prefers-reduced-motion` is honoured globally in CSS and per-component via framer
-  motion's `useReducedMotion`. The marquee **stops entirely** and drops its duplicate
-  track rather than slowing down — a slow infinite crawl is still a vestibular trigger.
-  Drag-to-swipe is disabled outright.
+  motion's `useReducedMotion`. The scrolling rows **stop entirely** and drop their
+  duplicate tracks rather than slowing down — a slow infinite crawl is still a
+  vestibular trigger. Drag-to-swipe is disabled outright.
+- The rows deliberately do **not** pause on hover, by request. They do pause on
+  `:focus-within`, which is a separate concern: without it a keyboard user tabbing into
+  a moving strip has the focused tile slide out from under them.
 
 Re-run the audit after content changes; artwork `alt` text is the easiest thing to get
 wrong.

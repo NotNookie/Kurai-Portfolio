@@ -1,19 +1,19 @@
+/* No card: the call to action sits directly on the page ground. Ornaments are
+   kept, but there is no panel background, border or radius behind them. */
 .section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   padding-block: var(--section-y);
 }
 
 .panel {
   position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  padding: clamp(var(--space-7), 5vw, var(--space-10)) var(--container-pad);
-  border-radius: var(--radius-2xl);
-  background-color: var(--bg-sunken);
-  border: 1px solid var(--border);
+  padding-block: clamp(var(--space-6), 4vw, var(--space-9));
 }
 
 .panel > span:first-child {
-  opacity: 0.55;
+  opacity: 0.4;
 }
 
 .inner {

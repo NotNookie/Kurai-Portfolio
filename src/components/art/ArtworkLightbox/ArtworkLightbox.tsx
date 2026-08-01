@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { AnimatePresence, motion, useReducedMotion, type PanInfo } from 'framer-motion'
-import { CATEGORY_LABELS, type Artwork } from '@/types/content'
+import type { Artwork } from '@/types/content'
 import { viewer } from '@/data/site'
 import { useScrollLock } from '@/hooks/useScrollLock'
 import { Icon, Tabs } from '@/components/ui'
-import { Blob } from '@/components/ui/Ornament/Ornament'
 import styles from './ArtworkLightbox.module.css'
 
 interface ArtworkLightboxProps {
@@ -20,19 +20,21 @@ interface ArtworkLightboxProps {
 const SWIPE_THRESHOLD = 60
 
 /**
- * Full-screen artwork viewer, modelled on Genshin Impact's character pages:
- * splash art, an information panel, variant tabs, and a thumbnail rail.
+ * Fullscreen artwork viewer.
  *
- * This is the only detail view — there are no per-artwork routes. It is a modal
- * dialog, so it traps focus, locks background scroll, closes on Escape, and
- * restores focus to the tile that opened it.
+ * The artwork fills the viewport; all chrome (title bar, arrows, variant pills,
+ * thumbnail rail) is overlaid on top of it and sits on gradient scrims, so it
+ * stays legible over artwork of any brightness.
+ *
+ * It is a modal dialog: focus moves in on open, is trapped across Tab, and
+ * returns to the tile that opened it. Escape closes, background scroll locks.
+ *
+ * Rendered through a portal to `document.body`. That is load-bearing: the
+ * gallery page sets `isolation: isolate` (for its ornament blobs), which would
+ * otherwise scope this `z-index` inside the page and let the sticky header
+ * paint over a supposedly fullscreen viewer.
  */
-export function ArtworkLightbox({
-  items,
-  openIndex,
-  onClose,
-  onNavigate,
-}: ArtworkLightboxProps) {
+export function ArtworkLightbox({ items, openIndex, onClose, onNavigate }: ArtworkLightboxProps) {
   const isOpen = openIndex !== null
   const [index, setIndex] = useState(openIndex ?? 0)
   const [variantId, setVariantId] = useState<string | null>(null)
@@ -48,7 +50,7 @@ export function ArtworkLightbox({
 
   useScrollLock(isOpen)
 
-  // Sync to the index the grid asked for, and remember where focus came from.
+  // Sync to the index the grid asked for.
   const [lastOpenIndex, setLastOpenIndex] = useState(openIndex)
   if (openIndex !== lastOpenIndex) {
     setLastOpenIndex(openIndex)
@@ -81,8 +83,6 @@ export function ArtworkLightbox({
   useEffect(() => {
     if (!isOpen) return
     returnFocusRef.current = document.activeElement
-    // Focus the close button rather than the dialog, so the first Tab lands
-    // somewhere predictable and Escape is immediately discoverable.
     const timer = window.setTimeout(() => closeRef.current?.focus(), 40)
     return () => window.clearTimeout(timer)
   }, [isOpen])
@@ -104,23 +104,18 @@ export function ArtworkLightbox({
         onClose()
         return
       }
-
       if (event.key === 'ArrowRight') {
         event.preventDefault()
         step(1)
         return
       }
-
       if (event.key === 'ArrowLeft') {
         event.preventDefault()
         step(-1)
         return
       }
-
       if (event.key !== 'Tab') return
 
-      // Focus trap: cycle within the dialog rather than escaping to the page
-      // behind, which is inert to sighted users but still tabbable without this.
       const focusables = dialogRef.current?.querySelectorAll<HTMLElement>(
         'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
       )
@@ -147,7 +142,11 @@ export function ArtworkLightbox({
     if (!isOpen) return
     railRef.current
       ?.querySelector<HTMLElement>('[aria-selected="true"]')
-      ?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', inline: 'center', block: 'nearest' })
+      ?.scrollIntoView({
+        behavior: reduceMotion ? 'auto' : 'smooth',
+        inline: 'center',
+        block: 'nearest',
+      })
   }, [index, isOpen, reduceMotion])
 
   const handleDragEnd = (_event: unknown, info: PanInfo) => {
@@ -170,135 +169,124 @@ export function ArtworkLightbox({
     active?.variants?.find((variant) => variant.id === variantId)?.image ?? active?.cover
   const variantPanelId = `${idBase}-variant-panel`
 
-  const enterX = reduceMotion ? 0 : direction >= 0 ? 44 : -44
-  const exitX = reduceMotion ? 0 : direction >= 0 ? -44 : 44
+  const enterX = reduceMotion ? 0 : direction >= 0 ? 48 : -48
+  const exitX = reduceMotion ? 0 : direction >= 0 ? -48 : 48
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {isOpen && active && displayed ? (
         <motion.div
-          className={styles.backdrop}
+          ref={dialogRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${viewer.label}: ${active.title}`}
+          className={styles.root}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: reduceMotion ? 0 : 0.22 }}
-          // Click-outside to dismiss; the panel stops propagation below.
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) onClose()
-          }}
+          transition={{ duration: reduceMotion ? 0 : 0.24 }}
         >
+          {/* Clicking the empty space around the artwork dismisses. The image
+              and every control stop propagation by sitting above this. */}
+          <button
+            type="button"
+            className={styles.dismissArea}
+            onClick={onClose}
+            tabIndex={-1}
+            aria-hidden="true"
+          />
+
           <motion.div
-            ref={dialogRef}
-            role="dialog"
-            aria-modal="true"
-            aria-label={`${viewer.label}: ${active.title}`}
-            className={styles.dialog}
-            initial={{ opacity: 0, scale: reduceMotion ? 1 : 0.97, y: reduceMotion ? 0 : 12 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: reduceMotion ? 1 : 0.98, y: reduceMotion ? 0 : 8 }}
-            transition={{ duration: reduceMotion ? 0 : 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className={styles.stage}
+            drag={reduceMotion ? false : 'x'}
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.12}
+            onDragEnd={handleDragEnd}
+            id={hasVariants ? variantPanelId : undefined}
+            role={hasVariants ? 'tabpanel' : undefined}
+            aria-labelledby={
+              hasVariants && activeVariantId
+                ? `${idBase}-variant-tab-${activeVariantId}`
+                : undefined
+            }
           >
-            <Blob tone="cyan" placement="top-left" scale={1.2} />
-            <Blob tone="pink" placement="bottom-right" scale={1.35} />
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.img
+                key={displayed.src}
+                src={displayed.src}
+                alt={displayed.alt}
+                className={styles.art}
+                draggable={false}
+                initial={{ opacity: 0, x: enterX }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: exitX }}
+                transition={{ duration: reduceMotion ? 0 : 0.35, ease: [0.16, 1, 0.3, 1] }}
+              />
+            </AnimatePresence>
+          </motion.div>
 
-            <button
-              ref={closeRef}
-              type="button"
-              onClick={onClose}
-              className={styles.close}
-              aria-label={viewer.close}
-            >
-              <Icon name="close" size={20} />
-            </button>
-
-            <div className={styles.layout}>
-              <div className={styles.info}>
-                <span className={styles.index} aria-hidden="true">
-                  {String(index + 1).padStart(2, '0')}
-                </span>
-
-                <AnimatePresence mode="wait" initial={false}>
-                  <motion.div
-                    key={active.slug}
-                    initial={{ opacity: 0, y: reduceMotion ? 0 : 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: reduceMotion ? 0 : -8 }}
-                    transition={{ duration: reduceMotion ? 0 : 0.3, ease: [0.16, 1, 0.3, 1] }}
-                  >
-                    <p className={styles.eyebrow}>{active.eyebrow}</p>
-                    <h2 className={styles.name}>{active.title}</h2>
-                    <p className={styles.description}>{active.description}</p>
-
-                    <dl className={styles.details}>
-                      {active.details?.map((detail) => (
-                        <div key={detail.label} className={styles.detailRow}>
-                          <dt className={styles.detailLabel}>{detail.label}</dt>
-                          <dd className={styles.detailValue}>{detail.value}</dd>
-                        </div>
-                      ))}
-                      <div className={styles.detailRow}>
-                        <dt className={styles.detailLabel}>Category</dt>
-                        <dd className={styles.detailValue}>
-                          {CATEGORY_LABELS[active.category]}
-                        </dd>
-                      </div>
-                    </dl>
-                  </motion.div>
-                </AnimatePresence>
-
-                {hasVariants && active.variants ? (
-                  <Tabs
-                    items={active.variants.map(({ id, label }) => ({ id, label }))}
-                    value={activeVariantId ?? active.variants[0]!.id}
-                    onChange={setVariantId}
-                    label={`${active.title} — ${viewer.variantsLabel}`}
-                    idBase={`${idBase}-variant`}
-                    appearance="pill"
-                    className={styles.variantTabs}
-                  />
-                ) : null}
-              </div>
-
-              <motion.div
-                className={styles.artArea}
-                id={hasVariants ? variantPanelId : undefined}
-                role={hasVariants ? 'tabpanel' : undefined}
-                aria-labelledby={
-                  hasVariants && activeVariantId
-                    ? `${idBase}-variant-tab-${activeVariantId}`
-                    : undefined
-                }
-                drag={reduceMotion ? false : 'x'}
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.14}
-                onDragEnd={handleDragEnd}
-              >
-                <AnimatePresence mode="wait" initial={false}>
-                  <motion.img
-                    key={displayed.src}
-                    src={displayed.src}
-                    alt={displayed.alt}
-                    className={styles.art}
-                    draggable={false}
-                    initial={{ opacity: 0, x: enterX }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: exitX }}
-                    transition={{ duration: reduceMotion ? 0 : 0.4, ease: [0.16, 1, 0.3, 1] }}
-                  />
-                </AnimatePresence>
-              </motion.div>
+          {/* ------------------------------------------------------ top bar */}
+          <div className={styles.topBar}>
+            {/* No category or eyebrow tag here by design — the gallery is
+                untagged. Year is metadata, not a tag, so it stays. */}
+            <div className={styles.titleBlock}>
+              <h2 className={styles.title}>{active.title}</h2>
+              <p className={styles.year}>{active.year}</p>
             </div>
 
-            <div className={styles.railWrap}>
+            <div className={styles.topActions}>
+              <p className={styles.counter} aria-hidden="true">
+                {String(index + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}
+              </p>
+              <button
+                ref={closeRef}
+                type="button"
+                onClick={onClose}
+                className={styles.close}
+                aria-label={viewer.close}
+              >
+                <Icon name="close" size={20} />
+              </button>
+            </div>
+          </div>
+
+          {/* ------------------------------------------------------- arrows */}
+          {items.length > 1 ? (
+            <>
               <button
                 type="button"
                 onClick={() => step(-1)}
-                className={styles.navButton}
+                className={`${styles.navButton} ${styles.navPrev}`}
                 aria-label={viewer.previous}
               >
-                <Icon name="arrow-left" size={18} />
+                <Icon name="arrow-left" size={22} />
               </button>
+              <button
+                type="button"
+                onClick={() => step(1)}
+                className={`${styles.navButton} ${styles.navNext}`}
+                aria-label={viewer.next}
+              >
+                <Icon name="arrow-right" size={22} />
+              </button>
+            </>
+          ) : null}
 
+          {/* --------------------------------------------------- bottom bar */}
+          <div className={styles.bottomBar}>
+            {hasVariants && active.variants ? (
+              <Tabs
+                items={active.variants.map(({ id, label }) => ({ id, label }))}
+                value={activeVariantId ?? active.variants[0]!.id}
+                onChange={setVariantId}
+                label={`${active.title} — ${viewer.variantsLabel}`}
+                idBase={`${idBase}-variant`}
+                appearance="pill"
+                className={styles.variantTabs}
+              />
+            ) : null}
+
+            {items.length > 1 ? (
               <div
                 ref={railRef}
                 role="tablist"
@@ -330,23 +318,15 @@ export function ArtworkLightbox({
                   )
                 })}
               </div>
+            ) : null}
+          </div>
 
-              <button
-                type="button"
-                onClick={() => step(1)}
-                className={styles.navButton}
-                aria-label={viewer.next}
-              >
-                <Icon name="arrow-right" size={18} />
-              </button>
-            </div>
-
-            <p className="visually-hidden" role="status" aria-live="polite">
-              {`${active.title}, ${index + 1} of ${items.length}`}
-            </p>
-          </motion.div>
+          <p className="visually-hidden" role="status" aria-live="polite">
+            {`${active.title}, ${index + 1} of ${items.length}`}
+          </p>
         </motion.div>
       ) : null}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   )
 }

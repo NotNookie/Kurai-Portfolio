@@ -38,7 +38,7 @@ export const site = {
 export type CommissionStatus = 'Open' | 'Waitlist' | 'Closed'
 
 export const nav: readonly NavItem[] = [
-  { label: 'Illustrations', to: '/illustrations' },
+  { label: 'Works', to: '/works' },
   { label: 'About', to: '/about' },
   { label: 'Contact', to: '/contact' },
 ]
@@ -64,19 +64,17 @@ export const hero = {
       body: 'Commissions are handled through VGen, where current slots, pricing tiers, and terms of service are always up to date.',
     },
   ],
-  primaryCta: { label: 'See illustrations', to: '/illustrations' },
+  primaryCta: { label: 'See works', to: '/works' },
   secondaryCta: { label: 'Commission me', to: '/contact' },
 } as const
 
 export const pages = {
-  gallery: {
-    title: 'Illustrations',
-    heading: 'Illustrations',
+  works: {
+    title: 'Works',
+    heading: 'Works',
     // TODO(kurai): one sentence introducing the gallery.
     intro: 'Character designs, commissions, and personal work.',
-    filterAllLabel: 'All',
-    filterLegend: 'Filter illustrations by category',
-    emptyMessage: 'No illustrations published yet.',
+    emptyMessage: 'Nothing published yet.',
     /** Screen-reader hint on each tile, since tiles show no caption. */
     openHint: 'Open in viewer',
   },
@@ -120,8 +118,8 @@ export const pages = {
 /** Home-page section copy. */
 export const home = {
   marquee: {
-    eyebrow: 'Recent work',
-    heading: 'Illustrations',
+    eyebrow: 'Portfolio',
+    heading: 'Works',
     cta: 'See all',
   },
   aboutTeaser: {
@@ -139,8 +137,8 @@ export const home = {
 export const viewer = {
   label: 'Artwork viewer',
   close: 'Close viewer',
-  next: 'Next illustration',
-  previous: 'Previous illustration',
-  railLabel: 'Choose an illustration',
+  next: 'Next piece',
+  previous: 'Previous piece',
+  railLabel: 'Choose a piece',
   variantsLabel: 'Artwork variants',
 } as const

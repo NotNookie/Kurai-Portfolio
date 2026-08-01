@@ -1,36 +1,38 @@
 .hero {
-  position: relative;
-  padding: var(--space-5) var(--container-pad) var(--space-6);
-  isolation: isolate;
-}
-
-/**
- * The artwork sits in a rounded frame rather than bleeding to the window edge.
- * Softer and more "pop" than a full-bleed banner, and it keeps the cream ground
- * visible around it so the page reads as one bright surface.
- */
-.frame {
-  position: relative;
   /**
-   * `isolation` is load-bearing, not cosmetic. Without a stacking context here
-   * the `z-index: -1` backdrop is painted in the section's context — i.e.
-   * *behind* this element's own background-color, which hid the cover art
-   * entirely. With it, the frame's background paints first and the backdrop
-   * layers on top of it, still beneath the card.
+   * Crop controls for the cover art.
+   *
+   * `object-fit: cover` alone cannot do this job: the source is 16:9 and so is
+   * a typical desktop hero, so almost nothing is cropped horizontally and
+   * `object-position` has under 40px of travel. Her name and handles are
+   * painted across the left ~44% of the artwork, so the image is scaled up and
+   * anchored right until that region falls outside the frame.
+   *
+   * Cropping the lettering out *entirely* needs ~1.8x, which reduces her to an
+   * extreme facial close-up — her figure is close to square, so forcing it into
+   * a wide hero destroys the composition. Instead the zoom is set so whatever
+   * lettering remains lands inside the scrim's fully-opaque left band, which
+   * covers it just as effectively while keeping her in frame.
+   *
+   * 1.5 shows roughly the right 65% of the source, putting the tail of the
+   * lettering inside the leftmost ~14% of the frame, where the scrim is at
+   * least 96% opaque. At 1.35 a faint pink ghost of it was still visible.
+   * If it ever peeks through again, raise the zoom before widening the scrim —
+   * the scrim is what limits how much artwork stays visible.
    */
-  isolation: isolate;
-  max-width: 96rem;
-  margin-inline: auto;
-  min-height: min(calc(100svh - var(--header-h) - var(--space-9)), 46rem);
+  --hero-zoom: 1.5;
+  --hero-origin-y: 32%;
+
+  position: relative;
   display: flex;
   align-items: center;
-  border-radius: var(--radius-2xl);
+  min-height: min(calc(100svh - var(--header-h)), 48rem);
   overflow: hidden;
+  isolation: isolate;
   background-color: var(--bg-sunken);
-  box-shadow: var(--shadow-md);
 }
 
-/* ---------------------------------------------------------------- backdrop */
+/* --------------------------------------------------------------- backdrop */
 
 .backdrop {
   position: absolute;
@@ -42,44 +44,51 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Her portrait sits in the right ~45% of the cover art. Biasing the crop
-     right keeps her in frame as the viewport narrows; the painted-in name and
-     handles on the left end up behind the content card, where they belong. */
-  object-position: 74% center;
+  object-position: right center;
+  scale: var(--hero-zoom);
+  /* Right origin pushes the painted lettering off the left edge; the vertical
+     origin keeps her face in frame as the zoom crops top and bottom. */
+  transform-origin: 100% var(--hero-origin-y);
 }
 
+/**
+ * Legibility scrim. Her artwork behind the copy is a mix of pale cyan, white
+ * dots and hot pink; plum text over the pink drops well below 4.5:1, so a cream
+ * wash sits under the text and fades out before reaching her portrait.
+ */
 .scrim {
   position: absolute;
   inset: 0;
-  background: var(--scrim);
+  /**
+   * The ramp is tuned by measurement, not by eye. The copy column ends around
+   * 41% of the viewport, so the wash stays near-opaque to ~40% and only then
+   * falls away. An earlier, gentler ramp left the body copy at 2.2:1 and the
+   * eyebrow at 1.8:1 where they crossed her dark hair — axe cannot catch that,
+   * because it skips contrast checks on text over images.
+   */
+  background: linear-gradient(
+    to right,
+    var(--bg) 0%,
+    var(--bg) 26%,
+    color-mix(in srgb, var(--bg) 90%, transparent) 42%,
+    color-mix(in srgb, var(--bg) 52%, transparent) 55%,
+    color-mix(in srgb, var(--bg) 12%, transparent) 67%,
+    transparent 78%
+  );
 }
 
 /* -------------------------------------------------------------- container */
 
 .container {
   position: relative;
-  padding-block: var(--space-8);
+  padding-block: var(--space-9);
 }
 
-/* ------------------------------------------------------------------- card */
+/* ------------------------------------------------------------------- copy */
+/* Sits directly on the artwork — no card, no panel, no backdrop-filter. */
 
-/* The dot field inside the card sits behind the copy; keep it faint enough
-   that it never competes with body text for legibility. */
-.card > span:first-child {
-  opacity: 0.4;
-}
-
-.card {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  width: min(100%, 33rem);
-  padding: clamp(var(--space-5), 3vw, var(--space-7));
-  background-color: color-mix(in srgb, var(--surface) 92%, transparent);
-  backdrop-filter: blur(18px) saturate(1.2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
+.copy {
+  width: min(100%, 34rem);
 }
 
 .eyebrow {
@@ -93,10 +102,10 @@
 
 .name {
   margin-bottom: var(--space-5);
-  font-size: var(--text-5xl);
+  font-size: var(--text-6xl);
   font-weight: var(--weight-black);
   letter-spacing: var(--tracking-tighter);
-  line-height: 1;
+  line-height: 0.95;
   color: var(--text);
 }
 
@@ -105,7 +114,7 @@
 }
 
 .panel {
-  /* Reserve the tallest panel so the card does not resize as tabs switch. */
+  /* Reserve the tallest panel so the copy does not reflow as tabs switch. */
   min-height: 7rem;
   margin-bottom: var(--space-5);
 }
@@ -115,9 +124,13 @@
 }
 
 .panelText {
-  font-size: var(--text-base);
+  max-width: 46ch;
+  font-size: var(--text-lg);
   line-height: var(--leading-relaxed);
-  color: var(--text-muted);
+  /* Full-strength ink rather than `--text-muted`: this sits on artwork, and the
+     muted tone measured 2.2:1 at the right edge of the column. Hierarchy still
+     reads from size and weight against the heading. */
+  color: var(--text);
 }
 
 .actions {
@@ -128,17 +141,42 @@
 
 /* ------------------------------------------------------------ breakpoints */
 
+/**
+ * The copy column is a fixed 34rem but the scrim ramp is a percentage of the
+ * viewport, so the narrower the window the further the text runs past the
+ * strongly-washed band. Measured at 1000px the body copy fell to 4.0:1, so the
+ * ramp is pushed right as the viewport shrinks.
+ */
+@media (max-width: 68rem) {
+  .scrim {
+    background: linear-gradient(
+      to right,
+      var(--bg) 0%,
+      var(--bg) 40%,
+      color-mix(in srgb, var(--bg) 88%, transparent) 58%,
+      color-mix(in srgb, var(--bg) 45%, transparent) 72%,
+      transparent 88%
+    );
+  }
+}
+
+@media (max-width: 62rem) {
+  /* Less horizontal room for the copy, so crop a little tighter still. */
+  .hero {
+    --hero-zoom: 1.5;
+  }
+}
+
 @media (max-width: 48rem) {
   /**
-   * Stacked layout. On a portrait viewport `cover` crops the sides but not the
-   * height, so her face lands dead centre — exactly where a full-width card
-   * sits. Giving the artwork its own window above the card fixes that.
+   * Stacked. On a portrait viewport the copy spans the full width, so a
+   * left-to-right scrim cannot work — the artwork gets its own window at the
+   * top and the copy sits beneath it on the page ground.
    */
   .hero {
-    padding-inline: var(--space-3);
-  }
+    --hero-zoom: 1.35;
+    --hero-origin-y: 26%;
 
-  .frame {
     display: block;
     min-height: 0;
   }
@@ -152,23 +190,18 @@
     max-height: 24rem;
   }
 
-  .backdropImage {
-    /* Now cropped on both axes, so vertical framing finally has an effect. */
-    object-position: 68% 26%;
-  }
-
   .scrim {
-    background: linear-gradient(to top, var(--bg-sunken) 1%, transparent 44%);
+    background: linear-gradient(to top, var(--bg-sunken) 1%, transparent 46%);
   }
 
   .container {
     position: relative;
     z-index: var(--z-raised);
-    padding-block: 0 var(--space-6);
-    margin-top: -2.5rem;
+    padding-block: var(--space-6) var(--space-8);
+    background-color: var(--bg-sunken);
   }
 
-  .card {
+  .copy {
     width: 100%;
   }
 

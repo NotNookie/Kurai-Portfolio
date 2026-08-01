@@ -56,7 +56,7 @@ export function ArtworkTile({
         </span>
         {/* The tile shows no text, so the button needs its name from here. */}
         <span className="visually-hidden">
-          {artwork.title} — {pages.gallery.openHint}
+          {artwork.title} — {pages.works.openHint}
         </span>
       </button>
     </motion.li>

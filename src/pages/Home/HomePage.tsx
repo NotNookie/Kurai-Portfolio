@@ -1,18 +1,21 @@
 import { useDocumentTitle } from '@/hooks/useDocumentTitle'
 import { Hero } from '@/components/sections/Hero/Hero'
 import { ArtMarquee } from '@/components/sections/ArtMarquee/ArtMarquee'
-import { AboutTeaser } from '@/components/sections/AboutTeaser/AboutTeaser'
 import { ContactCta } from '@/components/sections/ContactCta/ContactCta'
 
-/** Long-scroll landing page: hero → artwork marquee → about → contact. */
+/**
+ * Landing page: hero → scrolling artwork rows → contact.
+ *
+ * There is no About section here by design; the bio lives on `/about` and the
+ * home page stays focused on artwork.
+ */
 export function HomePage() {
   useDocumentTitle()
 
   return (
     <>
       <Hero />
-      <ArtMarquee />
-      <AboutTeaser />
+      <ArtMarquee rows={3} />
       <ContactCta />
     </>
   )
