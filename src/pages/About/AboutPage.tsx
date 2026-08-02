@@ -46,14 +46,18 @@ export function AboutPage() {
         </motion.header>
 
         <div className={styles.layout}>
-          <motion.figure className={styles.portraitCard} {...rise(0.06)}>
-            <img
-              src={portraitImage}
-              alt={`Chibi avatar of ${site.name}.`}
-              className={styles.portrait}
-              loading="eager"
-              decoding="async"
-            />
+          <motion.figure className={styles.portrait} {...rise(0.06)}>
+            <div className={styles.portraitCard}>
+              <img
+                src={portraitImage}
+                alt={`Chibi avatar of ${site.name}.`}
+                className={styles.portraitImage}
+                loading="eager"
+                decoding="async"
+              />
+            </div>
+            {/* The figure already carries the image; the caption names her. */}
+            <figcaption className={styles.portraitName}>{site.name}</figcaption>
           </motion.figure>
 
           <motion.div className={styles.bubble} {...rise(0.12)}>
@@ -79,12 +83,12 @@ export function AboutPage() {
             </Button>
           </motion.div>
 
-          <motion.section className={styles.focus} aria-labelledby="about-focus" {...rise(0.24)}>
-            <h2 id="about-focus" className={styles.focusHeading}>
-              {pages.about.focusHeading}
+          <motion.section className={styles.focus} aria-labelledby="about-services" {...rise(0.24)}>
+            <h2 id="about-services" className={styles.focusHeading}>
+              {pages.about.servicesHeading}
             </h2>
             <ul className={styles.chips} role="list">
-              {pages.about.focus.map((item) => (
+              {pages.about.services.map((item) => (
                 <li key={item} className={styles.chip}>
                   {item}
                 </li>

@@ -33,7 +33,7 @@ export const socials: readonly SocialLink[] = [
     href: 'https://www.instagram.com/hellanenoobart_307/',
     icon: 'instagram',
     placements: ['header', 'footer', 'contact'],
-    note: 'Finished illustrations and process reels.',
+    note: 'Finished pieces and process reels.',
   },
   {
     id: 'twitch',

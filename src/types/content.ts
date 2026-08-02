@@ -13,21 +13,21 @@
 
 /** Drives the hashtag filter row on the gallery. */
 export type ArtworkCategory =
-  | 'character-design'
-  | 'illustration'
+  | 'rendered-illustration'
+  | 'pixel-art'
+  | 'sketch'
   | 'chibi'
   | 'emote'
-  | 'environment'
-  | 'editorial'
+  | 'reference-sheet'
 
 /** Human labels for {@link ArtworkCategory}. Keep exhaustive. */
 export const CATEGORY_LABELS: Record<ArtworkCategory, string> = {
-  'character-design': 'Character Design',
-  illustration: 'Illustration',
+  'rendered-illustration': 'Rendered Illustration',
+  'pixel-art': 'Pixel Art',
+  sketch: 'Sketch',
   chibi: 'Chibi',
   emote: 'Emote',
-  environment: 'Environment',
-  editorial: 'Editorial',
+  'reference-sheet': 'Reference Sheet',
 }
 
 /**
@@ -73,13 +73,23 @@ export interface Artwork {
   /** URL-safe id, unique across the collection. Used in `?piece=`. */
   readonly slug: string
   readonly title: string
-  readonly year: number
   readonly category: ArtworkCategory
   readonly cover: ArtworkImage
-  /** Small label above the title in the lightbox, e.g. "Original Character". */
-  readonly eyebrow: string
-  /** Blurb in the lightbox panel. Around 40 words; the panel is fixed height. */
-  readonly description: string
+  /**
+   * Year the piece was made. Optional — the viewer hides the line when it is
+   * absent, so an unknown date is left blank rather than guessed at.
+   */
+  readonly year?: number
+  /**
+   * Small label above the title. Currently not rendered anywhere (the gallery
+   * is untagged), kept so it can return without a data migration.
+   */
+  readonly eyebrow?: string
+  /**
+   * Blurb about the piece. Also not rendered today. Optional so an entry can be
+   * added with nothing invented.
+   */
+  readonly description?: string
   readonly variants?: readonly ArtworkVariant[]
   readonly details?: readonly ArtworkDetail[]
   /** Promotes the piece into the home page marquee. */

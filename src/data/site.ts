@@ -21,10 +21,10 @@ import type { NavItem } from '@/types/content'
 export const site = {
   name: 'Hellane Kurai',
   shortName: 'Kurai',
-  role: 'Portfolio',
+  role: 'Digital Artist',
   // TODO(kurai): ~150 characters, used for search results and link previews.
   description:
-    'Portfolio of Hellane Kurai — Commission information and Socials.',
+    'Portfolio of Hellane Kurai, digital artist — rendered illustrations, pixel art, chibis, plus commission information.',
   /** Set once the domain is live; used for canonical and share URLs. */
   url: '',
   // TODO(kurai): public contact address, or leave null to hide it entirely.
@@ -44,7 +44,7 @@ export const nav: readonly NavItem[] = [
 
 /** Home hero — the mockup's "Featured Character" card, with Kurai as subject. */
 export const hero = {
-  eyebrow: 'Illustrator & Character Designer',
+  eyebrow: 'Digital Artist',
   name: 'Hellane Kurai',
   backgroundAlt:
     'Illustrated self-portrait of Hellane Kurai: long purple hair, round glasses, green top, holding a stylus, against a pink and sky-blue polka-dot background.',
@@ -54,7 +54,7 @@ export const hero = {
       id: 'about',
       label: 'About',
       // TODO(kurai): 2–3 sentences. Who you are and what you draw.
-      body: 'Character-focused illustrator working in a bright, expressive anime style — original characters, commissioned portraits, and reference sheets.',
+      body: 'Digital artist working in a bright, expressive anime style — rendered illustrations, pixel art, chibis, and sketches.',
     },
     {
       id: 'commissions',
@@ -72,8 +72,12 @@ export const pages = {
     title: 'Works',
     heading: 'Works',
     // TODO(kurai): one sentence introducing the gallery.
-    intro: 'Character designs, commissions, and personal work.',
+    intro: 'Commissions, original characters, and personal work.',
     emptyMessage: 'Nothing published yet.',
+    /** Label for the chip that clears the category filter. */
+    filterAllLabel: 'All',
+    /** Accessible name for the filter row. */
+    filterLegend: 'Filter works by category',
     /** Screen-reader hint on each tile, since tiles show no caption. */
     openHint: 'Open in viewer',
   },
@@ -90,8 +94,8 @@ export const pages = {
     // TODO(kurai): your actual tools — delete any you do not use.
     toolkit: ['Krita', 'Aseprite'],
     // TODO(kurai): delete this block entirely if you would rather not list one.
-    focus: ['Character design', 'Portrait commissions', 'Reference sheets', 'Emotes'],
-    focusHeading: 'What I take on',
+    services: ['Rendered illustrations', 'Pixel art', 'Sketching', 'Chibis'],
+    servicesHeading: 'Services',
     toolkitHeading: 'Toolkit',
   },
   contact: {

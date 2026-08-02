@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion, useReducedMotion, type PanInfo } from 'framer-motion'
-import type { Artwork } from '@/types/content'
+import { CATEGORY_LABELS, type Artwork } from '@/types/content'
 import { viewer } from '@/data/site'
 import { useScrollLock } from '@/hooks/useScrollLock'
 import { Icon, Tabs } from '@/components/ui'
@@ -227,11 +227,17 @@ export function ArtworkLightbox({ items, openIndex, onClose, onNavigate }: Artwo
 
           {/* ------------------------------------------------------ top bar */}
           <div className={styles.topBar}>
-            {/* No category or eyebrow tag here by design — the gallery is
-                untagged. Year is metadata, not a tag, so it stays. */}
             <div className={styles.titleBlock}>
               <h2 className={styles.title}>{active.title}</h2>
-              <p className={styles.year}>{active.year}</p>
+              <p className={styles.meta}>
+                {CATEGORY_LABELS[active.category]}
+                {active.year ? (
+                  <>
+                    <span className={styles.dot} aria-hidden="true" />
+                    {active.year}
+                  </>
+                ) : null}
+              </p>
             </div>
 
             <div className={styles.topActions}>

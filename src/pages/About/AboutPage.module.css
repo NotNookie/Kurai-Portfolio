@@ -59,21 +59,34 @@
 
 /* --------------------------------------------------------------- portrait */
 
+/* The figure wraps the framed image plus her name. */
+.portrait {
+  grid-column: 1 / span 4;
+  grid-row: 1;
+  margin: 0;
+}
+
 .portraitCard {
   composes: card;
 
   position: relative;
   overflow: hidden;
-  grid-column: 1 / span 4;
-  grid-row: 1;
-  margin: 0;
   aspect-ratio: 1;
 }
 
-.portrait {
+.portraitImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.portraitName {
+  margin-top: var(--space-4);
+  text-align: center;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text);
 }
 
 /* ----------------------------------------------------------------- bubble */
@@ -206,7 +219,7 @@
 /* ------------------------------------------------------------ breakpoints */
 
 @media (max-width: 62rem) {
-  .portraitCard,
+  .portrait,
   .statusCard {
     grid-column: 1 / span 5;
   }
@@ -224,7 +237,7 @@
     gap: var(--space-7);
   }
 
-  .portraitCard {
+  .portrait {
     align-self: center;
     width: min(100%, 17rem);
   }
