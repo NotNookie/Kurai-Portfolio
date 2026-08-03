@@ -9,6 +9,7 @@ npm run dev        # http://localhost:5173
 npm run build      # typecheck + production build to dist/
 npm run typecheck  # tsc only
 npm run lint       # eslint
+npm run check:art  # artwork data vs files on disk
 ```
 
 
@@ -51,20 +52,26 @@ any string, or swapping the whole data layer for a CMS, touches no component.
 | Path | What it is |
 | --- | --- |
 | `/` | Hero → three scrolling artwork rows → contact CTA |
-| `/works` | The gallery. `?piece=` opens the fullscreen viewer |
+| `/works` | The gallery. `?category=` filters, `?piece=` opens the fullscreen viewer |
 | `/illustrations` | Permanent redirect to `/works`, query string preserved |
 | `/about` | Bio |
 | `/contact` | Links only — commissions route to VGen |
 | anything else | 404 |
 
-The open artwork lives in the query string, so an individual piece is a shareable URL
-that survives a refresh and works with the back button.
+Both the active filter and the open artwork live in the query string, so a filtered view
+and an individual piece are each a shareable URL that survives a refresh and works with
+the back button. The viewer pages through the *filtered* list, so arrowing from a chibi
+never lands on a piece the visitor has filtered out.
 
-**There are no category filters and no tags.** The grid shows artwork only — no titles,
-no captions, no categories — and the viewer shows just the title and year. `category`,
-`description` and `eyebrow` are still on the `Artwork` type and still filled in; they
-are simply not rendered anywhere, so re-enabling any of them is a UI change with no data
-migration.
+**Tiles carry no captions.** The grid is artwork only — the category chips above it do
+the labelling, and the viewer shows title, category and (when known) year. `eyebrow` and
+`description` are still on the `Artwork` type but are not rendered anywhere, so bringing
+either back is a UI change with no data migration.
+
+The chip row is built from `getUsedCategories()`, which lists only categories that
+actually contain artwork — an empty category can never render a chip leading to an empty
+grid. Chip order follows the declaration order of `CATEGORY_LABELS` in
+`src/types/content.ts`; reorder there to reorder the chips.
 
 ---
 
@@ -82,6 +89,22 @@ migration.
    or leave them, nothing renders them today.
 7. `variants` is optional — supply it only for genuine alternate art. The tabs hide
    themselves when it is absent.
+
+---
+
+## Checking the artwork data
+
+`npm run check:art` verifies that `src/data/artworks.ts` and the files in `public/art/`
+agree. `npm run build` cannot catch any of this — TypeScript compiles an entry whose
+image does not exist, or whose `aspect` is wrong, without complaint.
+
+It checks that every referenced image exists, every file on disk is referenced, slugs are
+unique, `aspect` matches the file's real pixel dimensions, alt text is present and is not
+just the title repeated, and filenames are deploy-safe (no spaces, lowercase extension).
+
+Dimensions are read straight from the PNG/WebP/JPEG/GIF headers, so it has no
+dependencies. It exits non-zero on any error and can gate a deploy; warnings (an
+unreferenced file, an inexact-but-close aspect) do not fail the run.
 
 ---
 
@@ -229,11 +252,10 @@ wrong.
 
 ## Known issues / next steps
 
-1. **The hero image is 1.18 MB.** `kuraiCover.png` is the largest asset by an order of
-   magnitude and it is the LCP element. Converting it (and future artwork) to WebP/AVIF
-   would cut roughly 70%. Needs a decision: export WebP by hand, or add
-   `vite-plugin-image-optimizer` (pulls in `sharp`, ~30 MB in `node_modules`). Not done
-   because it adds a build dependency.
+1. **Image weight is handled for now.** The hero was converted to WebP by hand
+   (1,185 kB → 90 kB) and the gallery is already mostly WebP. There is still no automated
+   pipeline, so new artwork needs converting before it is added — `vite-plugin-image-optimizer`
+   would do it at build time but pulls in `sharp` (~30 MB in `node_modules`).
 2. **`react-router` 7.18.2 carries a high-severity advisory** for a CSRF bypass in its
    RSC mode. This app is a static client-rendered SPA using neither RSC nor
    react-router's server runtime, so the vulnerable path is not reachable. No patched

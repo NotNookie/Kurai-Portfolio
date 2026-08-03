@@ -1,0 +1,17 @@
+/* Inherits every type property from the heading it is rendered inside. */
+.line {
+  display: inline;
+}
+
+/**
+ * Each word transforms independently, so it has to be an inline-block.
+ *
+ * Deliberately NOT clipped with `overflow: hidden` — the display weights here
+ * have descenders and generous negative tracking, and a clip box tight enough
+ * to mask the rise also shaves the tails off g, y and j.
+ */
+.word {
+  display: inline-block;
+  white-space: pre;
+  will-change: transform, opacity;
+}

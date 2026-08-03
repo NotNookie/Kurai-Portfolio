@@ -2,7 +2,8 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { pages, site } from '@/data/site'
 import { primarySocial } from '@/data/socials'
 import { useDocumentTitle } from '@/hooks/useDocumentTitle'
-import { Button, Container } from '@/components/ui'
+import { fadeUp, VIEWPORT } from '@/lib/motion'
+import { Button, Container, RevealText } from '@/components/ui'
 import { Blob } from '@/components/ui/Ornament/Ornament'
 import portraitImage from '@/assets/kuraiPfp.png'
 import styles from './AboutPage.module.css'
@@ -23,6 +24,16 @@ export function AboutPage() {
   useDocumentTitle(pages.about.title)
   const reduceMotion = useReducedMotion()
 
+  /**
+   * The intro is above the fold so it animates on mount; everything in the
+   * collage below reveals as it scrolls into view.
+   */
+  const reveal = {
+    variants: fadeUp(reduceMotion ?? false),
+    initial: 'hidden' as const,
+    whileInView: 'visible' as const,
+    viewport: VIEWPORT,
+  }
   const rise = (delay: number) => ({
     initial: { opacity: 0, y: reduceMotion ? 0 : 22 },
     animate: { opacity: 1, y: 0 },
@@ -42,11 +53,13 @@ export function AboutPage() {
         <motion.header className={styles.intro} {...rise(0)}>
           {/* The label steps back so the lede can be the page's voice. */}
           <p className={styles.eyebrow}>{pages.about.heading}</p>
-          <h1 className={styles.lede}>{pages.about.lede}</h1>
+          <RevealText as="h1" className={styles.lede} trigger="mount" stagger={0.045} delay={0.1}>
+            {pages.about.lede}
+          </RevealText>
         </motion.header>
 
         <div className={styles.layout}>
-          <motion.figure className={styles.portrait} {...rise(0.06)}>
+          <motion.figure className={styles.portrait} {...reveal}>
             <div className={styles.portraitCard}>
               <img
                 src={portraitImage}
@@ -60,7 +73,7 @@ export function AboutPage() {
             <figcaption className={styles.portraitName}>{site.name}</figcaption>
           </motion.figure>
 
-          <motion.div className={styles.bubble} {...rise(0.12)}>
+          <motion.div className={styles.bubble} {...reveal}>
             {pages.about.body.map((paragraph) => (
               <p key={paragraph} className={styles.paragraph}>
                 {paragraph}
@@ -68,7 +81,7 @@ export function AboutPage() {
             ))}
           </motion.div>
 
-          <motion.div className={styles.statusCard} {...rise(0.18)}>
+          <motion.div className={styles.statusCard} {...reveal}>
             <p className={styles.statusLabel}>Commissions</p>
             <p className={styles.statusValue}>
               <span
@@ -83,7 +96,7 @@ export function AboutPage() {
             </Button>
           </motion.div>
 
-          <motion.section className={styles.focus} aria-labelledby="about-services" {...rise(0.24)}>
+          <motion.section className={styles.focus} aria-labelledby="about-services" {...reveal}>
             <h2 id="about-services" className={styles.focusHeading}>
               {pages.about.servicesHeading}
             </h2>

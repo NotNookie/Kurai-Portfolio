@@ -1,8 +1,9 @@
 import { useId, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { hero } from '@/data/site'
-import { Button, Container, Tabs } from '@/components/ui'
-import coverImage from '@/assets/kuraiCover.png'
+import { staggerChild, staggerParent } from '@/lib/motion'
+import { Button, Container, RevealText, Tabs } from '@/components/ui'
+import coverImage from '@/assets/kuraiCover.webp'
 import styles from './Hero.module.css'
 
 /**
@@ -25,15 +26,13 @@ export function Hero() {
 
   const panel = hero.tabs.find((tab) => tab.id === activeTab) ?? hero.tabs[0]
 
-  const rise = (delay: number) => ({
-    initial: { opacity: 0, y: reduceMotion ? 0 : 18 },
-    animate: { opacity: 1, y: 0 },
-    transition: {
-      duration: reduceMotion ? 0 : 0.6,
-      delay: reduceMotion ? 0 : delay,
-      ease: [0.16, 1, 0.3, 1] as const,
-    },
-  })
+  /**
+   * The copy cascades in rather than arriving as one block: the name lands
+   * first and the rest of the page assembles around it. `delayChildren` holds
+   * everything back a beat so the artwork behind has painted first.
+   */
+  const parent = staggerParent(reduceMotion ?? false, 0.08, 0.15)
+  const child = staggerChild(reduceMotion ?? false)
 
   return (
     <section className={styles.hero} aria-labelledby={`${idBase}-name`}>
@@ -49,24 +48,41 @@ export function Hero() {
       </div>
 
       <Container className={styles.container}>
-        <motion.div className={styles.copy} {...rise(0.05)}>
-          <p className={styles.eyebrow}>{hero.eyebrow}</p>
+        <motion.div
+          className={styles.copy}
+          variants={parent}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.p className={styles.eyebrow} variants={child}>
+            {hero.eyebrow}
+          </motion.p>
 
-          <h1 id={`${idBase}-name`} className={styles.name}>
+          <RevealText
+            as="h1"
+            id={`${idBase}-name`}
+            className={styles.name}
+            trigger="mount"
+            stagger={0.07}
+            delay={0.25}
+          >
             {hero.name}
-          </h1>
+          </RevealText>
 
-          <Tabs
-            items={hero.tabs.map(({ id, label }) => ({ id, label }))}
-            value={activeTab}
-            onChange={setActiveTab}
-            label="About Hellane Kurai"
-            idBase={idBase}
-            appearance="pill"
-            className={styles.tabs}
-          />
+          <motion.div variants={child}>
+            <Tabs
+              items={hero.tabs.map(({ id, label }) => ({ id, label }))}
+              value={activeTab}
+              onChange={setActiveTab}
+              label="About Hellane Kurai"
+              idBase={idBase}
+              appearance="pill"
+              className={styles.tabs}
+            />
+          </motion.div>
 
-          <div
+          <motion.div
+            variants={child}
             id={`${idBase}-panel`}
             role="tabpanel"
             aria-labelledby={`${idBase}-tab-${panel.id}`}
@@ -83,16 +99,16 @@ export function Hero() {
             >
               {panel.body}
             </motion.p>
-          </div>
+          </motion.div>
 
-          <div className={styles.actions}>
+          <motion.div className={styles.actions} variants={child}>
             <Button to={hero.primaryCta.to} variant="solid" withArrow>
               {hero.primaryCta.label}
             </Button>
             <Button to={hero.secondaryCta.to} variant="outline">
               {hero.secondaryCta.label}
             </Button>
-          </div>
+          </motion.div>
         </motion.div>
       </Container>
     </section>

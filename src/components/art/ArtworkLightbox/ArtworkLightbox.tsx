@@ -4,6 +4,7 @@ import { AnimatePresence, motion, useReducedMotion, type PanInfo } from 'framer-
 import { CATEGORY_LABELS, type Artwork } from '@/types/content'
 import { viewer } from '@/data/site'
 import { useScrollLock } from '@/hooks/useScrollLock'
+import { SPRING_SOFT, EASE_OUT } from '@/lib/motion'
 import { Icon, Tabs } from '@/components/ui'
 import styles from './ArtworkLightbox.module.css'
 
@@ -14,6 +15,13 @@ interface ArtworkLightboxProps {
   onClose: () => void
   /** Fires on every selection change so the page can mirror it into the URL. */
   onNavigate: (artwork: Artwork, index: number) => void
+  /**
+   * Shared-layout id matching the grid tile that opened the viewer, so the
+   * thumbnail morphs into the fullscreen image. Undefined once the visitor has
+   * paged to a different piece — see the note in WorksPage about why exactly
+   * one tile may hold this at a time.
+   */
+  morphLayoutId?: string
 }
 
 /** Horizontal drag distance past which a swipe registers. */
@@ -34,7 +42,13 @@ const SWIPE_THRESHOLD = 60
  * otherwise scope this `z-index` inside the page and let the sticky header
  * paint over a supposedly fullscreen viewer.
  */
-export function ArtworkLightbox({ items, openIndex, onClose, onNavigate }: ArtworkLightboxProps) {
+export function ArtworkLightbox({
+  items,
+  openIndex,
+  onClose,
+  onNavigate,
+  morphLayoutId,
+}: ArtworkLightboxProps) {
   const isOpen = openIndex !== null
   const [index, setIndex] = useState(openIndex ?? 0)
   const [variantId, setVariantId] = useState<string | null>(null)
@@ -172,6 +186,14 @@ export function ArtworkLightbox({ items, openIndex, onClose, onNavigate }: Artwo
   const enterX = reduceMotion ? 0 : direction >= 0 ? 48 : -48
   const exitX = reduceMotion ? 0 : direction >= 0 ? -48 : 48
 
+  /**
+   * Morph only while showing the piece that was actually clicked, and only its
+   * cover. Switching variants swaps in a different file, so carrying the tile's
+   * id across would try to morph between two unrelated images.
+   */
+  const morphId = morphLayoutId && !variantId ? morphLayoutId : undefined
+  const isMorphing = Boolean(morphId)
+
   return createPortal(
     <AnimatePresence>
       {isOpen && active && displayed ? (
@@ -184,7 +206,7 @@ export function ArtworkLightbox({ items, openIndex, onClose, onNavigate }: Artwo
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: reduceMotion ? 0 : 0.24 }}
+          transition={{ duration: reduceMotion ? 0 : 0.22 }}
         >
           {/* Clicking the empty space around the artwork dismisses. The image
               and every control stop propagation by sitting above this. */}
@@ -213,14 +235,25 @@ export function ArtworkLightbox({ items, openIndex, onClose, onNavigate }: Artwo
             <AnimatePresence mode="wait" initial={false}>
               <motion.img
                 key={displayed.src}
+                layoutId={morphId}
                 src={displayed.src}
                 alt={displayed.alt}
                 className={styles.art}
                 draggable={false}
-                initial={{ opacity: 0, x: enterX }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: exitX }}
-                transition={{ duration: reduceMotion ? 0 : 0.35, ease: [0.16, 1, 0.3, 1] }}
+                /**
+                 * While morphing, the shared-layout projection owns the
+                 * movement. An enter offset on top of it fights the projection
+                 * and the image arrives from the wrong place, so
+                 * `initial={false}` hands control over entirely.
+                 */
+                initial={isMorphing ? false : { opacity: 0, x: enterX }}
+                animate={isMorphing ? { opacity: 1 } : { opacity: 1, x: 0 }}
+                exit={isMorphing ? { opacity: 1 } : { opacity: 0, x: exitX }}
+                transition={
+                  isMorphing
+                    ? SPRING_SOFT
+                    : { duration: reduceMotion ? 0 : 0.35, ease: EASE_OUT }
+                }
               />
             </AnimatePresence>
           </motion.div>

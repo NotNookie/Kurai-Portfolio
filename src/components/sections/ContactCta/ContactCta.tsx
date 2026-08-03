@@ -1,7 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { home } from '@/data/site'
 import { primarySocial, socialsFor } from '@/data/socials'
-import { Button, Container, Icon } from '@/components/ui'
+import { Button, Container, Icon, RevealText } from '@/components/ui'
 import { Blob, DotField } from '@/components/ui/Ornament/Ornament'
 import styles from './ContactCta.module.css'
 
@@ -28,9 +28,9 @@ export function ContactCta() {
         >
           <div className={styles.inner}>
             <p className={styles.eyebrow}>{home.contactTeaser.eyebrow}</p>
-            <h2 id="contact-cta" className={styles.heading}>
+            <RevealText id="contact-cta" as="h2" className={styles.heading} stagger={0.05}>
               {home.contactTeaser.heading}
-            </h2>
+            </RevealText>
 
             <div className={styles.actions}>
               <Button href={primarySocial.href} variant="solid" size="lg" withArrow>

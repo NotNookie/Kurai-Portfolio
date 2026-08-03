@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useReducedMotion } from 'framer-motion'
 import { home } from '@/data/site'
 import { getFeatured } from '@/lib/content'
-import { Icon } from '@/components/ui'
+import { Icon, RevealText } from '@/components/ui'
 import type { Artwork } from '@/types/content'
 import styles from './ArtMarquee.module.css'
 
@@ -160,9 +160,9 @@ export function ArtMarquee({ rows = 3 }: ArtMarqueeProps) {
       <div className={styles.head}>
         <div>
           <p className={styles.eyebrow}>{home.marquee.eyebrow}</p>
-          <h2 id="marquee-heading" className={styles.heading}>
+          <RevealText id="marquee-heading" as="h2" className={styles.heading} stagger={0.06}>
             {home.marquee.heading}
-          </h2>
+          </RevealText>
         </div>
         <Link to="/works" className={styles.cta}>
           {home.marquee.cta}

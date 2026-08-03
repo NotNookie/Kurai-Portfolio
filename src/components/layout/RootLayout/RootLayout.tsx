@@ -44,9 +44,21 @@ export function RootLayout() {
 
       <Header />
 
+      {/**
+       * Deliberately NOT `initial={false}`.
+       *
+       * That flag reads naturally as "skip the page transition on first load",
+       * but AnimatePresence publishes it through context to *every* descendant
+       * motion component, which then mount straight into their target state.
+       * It silently disabled the hero stagger, the heading reveals and every
+       * scroll reveal in the gallery — tiles far below the fold rendered fully
+       * visible because their `initial` was never applied.
+       *
+       * The cost of dropping it is that the first page also fades in, which is
+       * fine here.
+       */}
       <AnimatePresence
         mode="wait"
-        initial={false}
         // Scroll only when the path changes, not when a query param does —
         // otherwise opening the lightbox or switching a filter yanks the
         // gallery back to the top.

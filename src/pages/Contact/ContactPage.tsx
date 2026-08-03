@@ -2,7 +2,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { pages, site } from '@/data/site'
 import { primarySocial, socialsFor } from '@/data/socials'
 import { useDocumentTitle } from '@/hooks/useDocumentTitle'
-import { Button, Container, Icon } from '@/components/ui'
+import { Button, Container, Icon, RevealText } from '@/components/ui'
 import { Blob, DotField } from '@/components/ui/Ornament/Ornament'
 import styles from './ContactPage.module.css'
 
@@ -43,7 +43,9 @@ export function ContactPage() {
         <motion.div className={styles.intro} {...fade(0)}>
           {/* Mirrors the About page: small label, statement as the heading. */}
           <p className={styles.eyebrow}>{pages.contact.eyebrow}</p>
-          <h1 className={styles.heading}>{pages.contact.heading}</h1>
+          <RevealText as="h1" className={styles.heading} trigger="mount" stagger={0.05} delay={0.1}>
+            {pages.contact.heading}
+          </RevealText>
           <p className={styles.introText}>{pages.contact.intro}</p>
 
           {site.email ? (

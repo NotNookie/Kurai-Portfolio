@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 import type { ArtworkImage } from '@/types/content'
 import styles from './ArtImage.module.css'
 
@@ -16,6 +17,13 @@ interface ArtImageProps {
   aspect?: string
   sizes?: string
   className?: string
+  /**
+   * Shared-layout id. When set, the <img> becomes a `motion.img` so it can
+   * morph into another element carrying the same id — used to expand a gallery
+   * tile into the fullscreen viewer. Left undefined the image stays a plain
+   * <img>, so the other twenty tiles pay nothing for the feature.
+   */
+  layoutId?: string
 }
 
 /**
@@ -32,8 +40,13 @@ export function ArtImage({
   aspect,
   sizes,
   className,
+  layoutId,
 }: ArtImageProps) {
   const [loaded, setLoaded] = useState(false)
+  const ImageTag = layoutId ? motion.img : 'img'
+  // A plain <img> must not receive `layoutId`; React warns about the unknown
+  // attribute, so it is spread in only when the motion element is in play.
+  const layoutProps = layoutId ? { layoutId } : {}
 
   return (
     <div
@@ -41,7 +54,8 @@ export function ArtImage({
       style={{ aspectRatio: aspect ?? image.aspect }}
       data-loaded={loaded}
     >
-      <img
+      <ImageTag
+        {...layoutProps}
         src={image.src}
         alt={image.alt}
         loading={priority ? 'eager' : 'lazy'}

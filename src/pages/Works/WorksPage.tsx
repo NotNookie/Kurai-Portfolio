@@ -1,9 +1,10 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { pages } from '@/data/site'
 import { getArtworks, getUsedCategories, indexOfSlug } from '@/lib/content'
 import { useDocumentTitle } from '@/hooks/useDocumentTitle'
-import { Container } from '@/components/ui'
+import { useAfterPaint } from '@/hooks/useAfterPaint'
+import { Container, RevealText } from '@/components/ui'
 import { Blob } from '@/components/ui/Ornament/Ornament'
 import { ArtworkTile } from '@/components/art/ArtworkTile/ArtworkTile'
 import { ArtworkLightbox } from '@/components/art/ArtworkLightbox/ArtworkLightbox'
@@ -25,6 +26,23 @@ export function WorksPage() {
 
   const [searchParams, setSearchParams] = useSearchParams()
   const categories = getUsedCategories()
+
+  /**
+   * The slug currently allowed to morph between its grid tile and the viewer.
+   *
+   * Exactly one tile may carry the shared-layout id at a time, or framer-motion
+   * has two candidates for the same id and picks arbitrarily. So it is set when
+   * a tile is clicked, and cleared as soon as the visitor pages to a different
+   * piece — after that the viewer crossfades instead. It is deliberately NOT
+   * cleared on close, because the morph back to the tile needs the id to still
+   * be there while the viewer exits. It also starts undefined, so arriving on a
+   * `?piece=` deep link fades in rather than morphing from a tile the visitor
+   * never clicked.
+   */
+  const [morphSlug, setMorphSlug] = useState<string | null>(null)
+
+  /** One frame's grace so the masonry has laid out before tiles are observed. */
+  const revealReady = useAfterPaint()
 
   const requested = searchParams.get('category') ?? ALL
   // Guard against a hand-edited or stale URL naming a category that no longer
@@ -56,8 +74,10 @@ export function WorksPage() {
 
   const selectCategory = (id: string) => setParams({ category: id }, true)
 
-  const openPiece = (artwork: Artwork) =>
+  const openPiece = (artwork: Artwork) => {
+    setMorphSlug(artwork.slug)
     setParams({ category: activeCategory, piece: artwork.slug })
+  }
 
   const closePiece = useCallback(
     // `replace` so closing does not stack a history entry on top of opening.
@@ -66,7 +86,11 @@ export function WorksPage() {
   )
 
   const navigatePiece = useCallback(
-    (artwork: Artwork) => setParams({ category: activeCategory, piece: artwork.slug }, true),
+    (artwork: Artwork) => {
+      // Past the first piece there is no tile to morph from or back to.
+      setMorphSlug(null)
+      setParams({ category: activeCategory, piece: artwork.slug }, true)
+    },
     [activeCategory, setParams],
   )
 
@@ -77,7 +101,9 @@ export function WorksPage() {
 
       <Container>
         <header className={styles.header}>
-          <h1 className={styles.heading}>{pages.works.heading}</h1>
+          <RevealText as="h1" className={styles.heading} trigger="mount" stagger={0.06}>
+            {pages.works.heading}
+          </RevealText>
           <p className={styles.intro}>{pages.works.intro}</p>
         </header>
 
@@ -133,6 +159,8 @@ export function WorksPage() {
                 index={index}
                 priority={index < 4}
                 onOpen={() => openPiece(artwork)}
+                revealReady={revealReady}
+                layoutId={artwork.slug === morphSlug ? `art-${artwork.slug}` : undefined}
                 sizes="(max-width: 40rem) 50vw, (max-width: 68rem) 33vw, 25vw"
               />
             ))}
@@ -145,6 +173,7 @@ export function WorksPage() {
         openIndex={resolvedOpenIndex}
         onClose={closePiece}
         onNavigate={navigatePiece}
+        morphLayoutId={morphSlug ? `art-${morphSlug}` : undefined}
       />
     </div>
   )
