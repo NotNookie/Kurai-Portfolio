@@ -69,6 +69,16 @@
   pointer-events: auto;
 }
 
+/*
+ * The viewer already refuses to upscale — `width: auto` with only max-*
+ * constraints draws every piece at its natural size. But a 384px pixel piece
+ * still gets resampled by the device pixel ratio, so it needs the hint here
+ * too, exactly as the grid tiles do.
+ */
+.art[data-category='pixel-art'] {
+  image-rendering: pixelated;
+}
+
 /* ---------------------------------------------------------------- top bar */
 
 .topBar {

@@ -239,6 +239,8 @@ export function ArtworkLightbox({
                 src={displayed.src}
                 alt={displayed.alt}
                 className={styles.art}
+                // Drives `image-rendering` — pixel art must not be smoothed.
+                data-category={active.category}
                 draggable={false}
                 /**
                  * While morphing, the shared-layout projection owns the

@@ -1,4 +1,5 @@
 export { Button, type ButtonProps } from './Button/Button'
+export { CommissionStatus } from './CommissionStatus/CommissionStatus'
 export { Container } from './Container/Container'
 export { Icon, type IconProps } from './Icon/Icon'
 export { Blob, DotField } from './Ornament/Ornament'

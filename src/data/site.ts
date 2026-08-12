@@ -29,12 +29,29 @@ export const site = {
   url: '',
   // TODO(kurai): public contact address, or leave null to hide it entirely.
   email: null as string | null,
-  // TODO(kurai): 'Open' | 'Waitlist' | 'Closed' — drives the status pill.
-  commissionStatus: 'Open' as CommissionStatus,
+  /**
+   * TODO(kurai): update `value` AND `asOf` together whenever your availability
+   * changes. `asOf` is the date you last confirmed it, in YYYY-MM-DD.
+   *
+   * After 30 days the site stops asserting the status and points at VGen
+   * instead — a stale "Closed" costs nothing, but a stale "Open" means someone
+   * writes to you and waits. See `src/lib/status.ts`.
+   */
+  commissionStatus: {
+    value: 'Open' as CommissionStatus,
+    asOf: '2026-08-03',
+  },
   copyrightStartYear: 2024,
 } as const
 
 export type CommissionStatus = 'Open' | 'Waitlist' | 'Closed'
+
+/** Copy for the commission status, shared by the About and Contact pages. */
+export const commissions = {
+  label: 'Commissions',
+  /** Shown instead of the status once the declaration has aged out. */
+  staleLabel: 'Check VGen for current slots',
+} as const
 
 export const nav: readonly NavItem[] = [
   { label: 'Works', to: '/works' },
@@ -71,8 +88,12 @@ export const pages = {
   works: {
     title: 'Works',
     heading: 'Works',
-    // TODO(kurai): one sentence introducing the gallery.
-    intro: 'Commissions, original characters, and personal work.',
+    /**
+     * Noun for the visible piece count under the heading. There is deliberately
+     * no intro sentence: the heading sits directly on the chips, which is what
+     * gives the page its scale, and the chips already name the kinds of work.
+     */
+    countNoun: { one: 'piece', other: 'pieces' },
     emptyMessage: 'Nothing published yet.',
     /** Label for the chip that clears the category filter. */
     filterAllLabel: 'All',

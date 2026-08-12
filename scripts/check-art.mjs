@@ -4,13 +4,13 @@
  *
  * Verifies that `src/data/artworks.ts` and the files in `public/art/` agree.
  * `npm run build` cannot catch any of this — TypeScript happily compiles an
- * entry whose image does not exist, or whose declared aspect ratio is wrong.
+ * entry whose image does not exist, or whose declared dimensions are wrong.
  *
  * Checks:
  *   1. Every referenced image exists on disk.
  *   2. Every image on disk is referenced by an entry.
  *   3. Slugs are unique (duplicates make `?piece=` unreachable).
- *   4. Declared `aspect` matches the file's real pixel dimensions.
+ *   4. Declared `width`/`height` match the file's real pixel dimensions.
  *   5. Alt text is present and is not just the title repeated.
  *   6. Filenames are deploy-safe (no spaces, lowercase extension).
  *
@@ -116,20 +116,21 @@ const titles = [...source.matchAll(/^\s*title: (?:'((?:[^'\\]|\\.)*)'|"((?:[^"\\
 )
 
 /**
- * Every ArtworkImage is written as src / alt / aspect in that order, which
- * matches covers and variant images alike. Both quote styles are accepted
+ * Every ArtworkImage is written as src / alt / width / height in that order,
+ * which matches covers and variant images alike. Both quote styles are accepted
  * because an alt containing an apostrophe is written with double quotes.
  */
 const QUOTED = `(?:'((?:[^'\\\\]|\\\\.)*)'|"((?:[^"\\\\]|\\\\.)*)")`
 const imageRe = new RegExp(
-  `src: '([^']+)',\\s*\\n\\s*alt: ${QUOTED},\\s*\\n\\s*aspect: '([^']+)'`,
+  `src: '([^']+)',\\s*\\n\\s*alt: ${QUOTED},\\s*\\n\\s*width: (\\d+),\\s*\\n\\s*height: (\\d+)`,
   'g',
 )
 
 const images = [...source.matchAll(imageRe)].map((m) => ({
   src: m[1],
   alt: m[2] ?? m[3] ?? '',
-  aspect: m[4],
+  width: Number(m[4]),
+  height: Number(m[5]),
 }))
 
 /* ------------------------------------------------------------- reporting */
@@ -169,27 +170,18 @@ for (const img of images) {
     continue
   }
 
-  const [dw, dh] = img.aspect.split('/').map((n) => Number(n.trim()))
-  if (!dw || !dh) {
-    err(`unparseable aspect "${img.aspect}": ${img.src}`)
-    continue
-  }
-
-  const declared = dw / dh
-  const actual = size.width / size.height
-  const drift = Math.abs(declared - actual) / actual
-
-  if (drift > 0.01) {
+  /*
+   * Dimensions must match the file exactly. They used to be a hand-written
+   * `aspect: '3 / 4'` string checked with a 1% drift tolerance, which allowed a
+   * ratio that was merely close. Now they are the real numbers, so anything but
+   * an exact match is an error — the UI sizes tiles off these, and a wrong
+   * width would let a piece be drawn past its own resolution.
+   */
+  if (img.width !== size.width || img.height !== size.height) {
     err(
-      `aspect is ${(drift * 100).toFixed(1)}% off: ${img.src}\n` +
-        `      declared '${img.aspect}' (${declared.toFixed(3)}) but the file is ` +
-        `${size.width}x${size.height} (${actual.toFixed(3)})\n` +
-        `      fix: aspect: '${size.width} / ${size.height}'`,
-    )
-  } else if (dw !== size.width || dh !== size.height) {
-    warn(
-      `aspect is close but not exact: ${img.src} — declared '${img.aspect}', ` +
-        `file is ${size.width}x${size.height}`,
+      `dimensions do not match the file: ${img.src}\n` +
+        `      declared ${img.width}x${img.height}, file is ${size.width}x${size.height}\n` +
+        `      fix: width: ${size.width}, height: ${size.height}`,
     )
   }
 }

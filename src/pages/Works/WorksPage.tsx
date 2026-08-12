@@ -99,12 +99,20 @@ export function WorksPage() {
       <Blob tone="cyan" placement="top-right" scale={1.5} />
       <Blob tone="pink" placement="center-left" scale={1.2} />
 
-      <Container>
+      <Container width="wide">
         <header className={styles.header}>
           <RevealText as="h1" className={styles.heading} trigger="mount" stagger={0.06}>
             {pages.works.heading}
           </RevealText>
-          <p className={styles.intro}>{pages.works.intro}</p>
+          {/*
+            The count is both the subtitle and the filter announcement. It used
+            to be duplicated — a visible line plus a visually-hidden live region
+            saying the same thing, which made screen readers hear it twice.
+          */}
+          <p className={styles.count} role="status" aria-live="polite">
+            {visible.length}{' '}
+            {visible.length === 1 ? pages.works.countNoun.one : pages.works.countNoun.other}
+          </p>
         </header>
 
         {categories.length > 1 ? (
@@ -131,11 +139,6 @@ export function WorksPage() {
           </div>
         ) : null}
 
-        {/* Announces the new count when the filter changes. */}
-        <p className="visually-hidden" role="status" aria-live="polite">
-          {visible.length} {visible.length === 1 ? 'piece' : 'pieces'} shown
-        </p>
-
         {visible.length === 0 ? (
           <p className={styles.empty}>{pages.works.emptyMessage}</p>
         ) : (
@@ -148,7 +151,7 @@ export function WorksPage() {
             role="list"
             style={
               {
-                '--grid-columns': Math.max(1, Math.min(4, Math.floor(visible.length / 2))),
+                '--grid-columns': Math.max(1, Math.min(3, Math.floor(visible.length / 2))),
               } as React.CSSProperties
             }
           >
@@ -161,7 +164,7 @@ export function WorksPage() {
                 onOpen={() => openPiece(artwork)}
                 revealReady={revealReady}
                 layoutId={artwork.slug === morphSlug ? `art-${artwork.slug}` : undefined}
-                sizes="(max-width: 40rem) 50vw, (max-width: 68rem) 33vw, 25vw"
+                sizes="(max-width: 40rem) 50vw, (max-width: 68rem) 50vw, 33vw"
               />
             ))}
           </ul>

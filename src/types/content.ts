@@ -30,13 +30,6 @@ export const CATEGORY_LABELS: Record<ArtworkCategory, string> = {
   'reference-sheet': 'Reference Sheet',
 }
 
-/**
- * Intrinsic aspect ratio as a CSS `aspect-ratio` value ("3 / 4").
- * Required so grid cells reserve space before the image decodes — this is what
- * keeps layout shift at zero while a gallery of large artwork loads.
- */
-export type AspectRatio = `${number} / ${number}`
-
 /** A single image plus what is needed to render it accessibly. */
 export interface ArtworkImage {
   /** Absolute path from the web root, e.g. `/art/gallery/sakura.webp`. */
@@ -46,7 +39,20 @@ export interface ArtworkImage {
    * title. Empty string only when the image is purely decorative.
    */
   readonly alt: string
-  readonly aspect: AspectRatio
+  /**
+   * The file's real pixel dimensions. These do two jobs:
+   *
+   * 1. They reserve the frame before the file decodes, which is what keeps
+   *    layout shift at zero while a gallery of large artwork loads.
+   * 2. They cap how large the piece is ever drawn. Kurai's work spans three
+   *    scales — 3000px illustrations, 512px chibis, 384px pixel art — and a
+   *    uniform grid stretched the small pieces past their own resolution.
+   *
+   * They replaced a hand-written `aspect: '3 / 4'` string, which could drift
+   * from the actual file. `npm run check:art` verifies them against the headers.
+   */
+  readonly width: number
+  readonly height: number
 }
 
 /** Alternate art for one piece — line vs colour, outfit swaps, chibi versions. */

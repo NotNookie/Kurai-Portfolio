@@ -29,9 +29,13 @@ interface ArtImageProps {
 /**
  * Artwork renderer.
  *
- * Reserves the frame from the declared aspect ratio before the file decodes,
- * so gallery pages never reflow as images arrive, and fades each piece in once
- * it has actually painted.
+ * Reserves the frame from the file's real dimensions before it decodes, so
+ * gallery pages never reflow as images arrive, and fades each piece in once it
+ * has actually painted.
+ *
+ * The ratio is derived from `width`/`height` rather than declared separately —
+ * a hand-written ratio is a second source of truth that can disagree with the
+ * file, and this way it cannot.
  */
 export function ArtImage({
   image,
@@ -51,13 +55,15 @@ export function ArtImage({
   return (
     <div
       className={[styles.frame, className].filter(Boolean).join(' ')}
-      style={{ aspectRatio: aspect ?? image.aspect }}
+      style={{ aspectRatio: aspect ?? `${image.width} / ${image.height}` }}
       data-loaded={loaded}
     >
       <ImageTag
         {...layoutProps}
         src={image.src}
         alt={image.alt}
+        width={image.width}
+        height={image.height}
         loading={priority ? 'eager' : 'lazy'}
         // `high` on the hero measurably improves LCP; the rest can wait.
         fetchPriority={priority ? 'high' : 'auto'}

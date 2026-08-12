@@ -48,6 +48,18 @@ export function ArtworkTile({
     <motion.li
       className={styles.cell}
       /**
+       * Never draw a piece wider than it actually is.
+       *
+       * The columns are wide enough for the big rendered illustrations, which
+       * is what they are for — but the chibis are 512px and the pixel art goes
+       * down to 384px, and stretching those to fill a column upscales them into
+       * mush. A small piece now sits at its natural size in the column instead,
+       * which also reads better: a sticker and a full illustration should not
+       * occupy the same footprint.
+       */
+      style={{ maxWidth: artwork.cover.width }}
+      data-category={artwork.category}
+      /**
        * Reveals on scroll, not on mount. With twenty-plus pieces a mount
        * animation fires everything at once, so every tile below the fold has
        * finished animating before the visitor ever reaches it.

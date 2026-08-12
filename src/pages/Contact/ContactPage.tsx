@@ -2,7 +2,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { pages, site } from '@/data/site'
 import { primarySocial, socialsFor } from '@/data/socials'
 import { useDocumentTitle } from '@/hooks/useDocumentTitle'
-import { Button, Container, Icon, RevealText } from '@/components/ui'
+import { Button, CommissionStatus, Container, Icon, RevealText } from '@/components/ui'
 import { Blob, DotField } from '@/components/ui/Ornament/Ornament'
 import styles from './ContactPage.module.css'
 
@@ -65,14 +65,7 @@ export function ContactPage() {
               <h2 id="contact-commissions" className={styles.panelLabel}>
                 {pages.contact.commissionsHeading}
               </h2>
-              <p className={styles.status}>
-                <span
-                  className={styles.statusDot}
-                  data-status={site.commissionStatus}
-                  aria-hidden="true"
-                />
-                {site.commissionStatus}
-              </p>
+              <CommissionStatus />
             </div>
 
             <p className={styles.panelBody}>{pages.contact.commissionsBody}</p>

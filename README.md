@@ -81,13 +81,15 @@ grid. Chip order follows the declaration order of `CATEGORY_LABELS` in
 2. Add an entry to `src/data/artworks.ts`, copying an existing one.
 3. `slug` becomes the `?piece=` value — lowercase and hyphenated, and unique. A
    duplicate logs an error in the dev console.
-4. `aspect` must match the real image ratio (`'3 / 4'`, `'16 / 9'`, …). It reserves the
-   tile before the file loads, which is what keeps the masonry from jumping.
+4. `width` and `height` are the file's **real pixel dimensions**. They reserve the tile
+   before the file loads (which keeps the masonry from jumping) and cap how large the
+   piece is ever drawn. Run `npm run check:art` and it will print the correct numbers if
+   you get them wrong.
 5. `alt` describes what is depicted; never just repeat the title.
 6. `featured: true` puts the piece in the home-page scrolling rows.
-7. `category`, `description` and `eyebrow` are currently unused by the UI — fill them in
-   or leave them, nothing renders them today.
-7. `variants` is optional — supply it only for genuine alternate art. The tabs hide
+7. `description` and `eyebrow` are currently unused by the UI — fill them in or leave
+   them, nothing renders them today.
+8. `variants` is optional — supply it only for genuine alternate art. The tabs hide
    themselves when it is absent.
 
 ---
@@ -96,15 +98,41 @@ grid. Chip order follows the declaration order of `CATEGORY_LABELS` in
 
 `npm run check:art` verifies that `src/data/artworks.ts` and the files in `public/art/`
 agree. `npm run build` cannot catch any of this — TypeScript compiles an entry whose
-image does not exist, or whose `aspect` is wrong, without complaint.
+image does not exist, or whose declared dimensions are wrong, without complaint.
 
 It checks that every referenced image exists, every file on disk is referenced, slugs are
-unique, `aspect` matches the file's real pixel dimensions, alt text is present and is not
-just the title repeated, and filenames are deploy-safe (no spaces, lowercase extension).
+unique, `width`/`height` match the file's real pixel dimensions exactly, alt text is
+present and is not just the title repeated, and filenames are deploy-safe (no spaces,
+lowercase extension).
 
 Dimensions are read straight from the PNG/WebP/JPEG/GIF headers, so it has no
 dependencies. It exits non-zero on any error and can gate a deploy; warnings (an
-unreferenced file, an inexact-but-close aspect) do not fail the run.
+unreferenced file) do not fail the run.
+
+---
+
+## Commission status
+
+`site.commissionStatus` in `src/data/site.ts` is two fields, and they must be updated
+together:
+
+```ts
+commissionStatus: {
+  value: 'Open',      // 'Open' | 'Waitlist' | 'Closed'
+  asOf: '2026-08-03', // the day it was last confirmed
+}
+```
+
+The status is a factual claim about availability, and nothing in a static site keeps it
+true. So it has a shelf life: past `MAX_AGE_DAYS` (30, in `src/lib/status.ts`) the About
+and Contact pages stop asserting it and show `commissions.staleLabel` — a pointer to
+VGen — instead. Re-dating `asOf` re-asserts it.
+
+The failure is deliberately asymmetric. A stale *"Closed"* costs nothing; a stale
+*"Open"* means someone writes in, waits, and is let down. For the same reason a missing,
+malformed, or future `asOf` reads as stale rather than as a live claim.
+
+Both pages render `<CommissionStatus />`, so the rule lives in exactly one place.
 
 ---
 
@@ -147,7 +175,8 @@ Once that is true:
            fields:
              - { name: src,    widget: image }
              - { name: alt,    widget: string, hint: 'Describe what is depicted.' }
-             - { name: aspect, widget: string, default: '3 / 4' }
+             - { name: width,  widget: number, value_type: int }
+             - { name: height, widget: number, value_type: int }
    ```
 
 4. Replace the hand-written array in `src/data/artworks.ts` with a glob over the
@@ -263,10 +292,11 @@ wrong.
 3. **All copy is placeholder.** Every string needing Kurai's input is marked
    `TODO(kurai)`; nothing invents biography, clients, location, or years active. Search
    the repo for `TODO(kurai)`.
-4. **The Bluesky handle was read off the cover art**, not from a supplied link — confirm
-   or delete that entry in `src/data/socials.ts`.
-5. **Gallery entries reuse the same three images** as placeholders.
-6. `site.url` and the Open Graph tags in `index.html` need the real domain.
-7. The site is English-only by decision. If a second language is ever wanted, the shape
+4. **Artwork metadata is thin.** All 20 pieces are real and in place, but none carry a
+   `year`, two are titled by guess ("Bubbles", "Elf"), "Nookie Dog" is named off its
+   filename, and `chibiOri.webp` is signed *auwii* — confirm whose it is. Run
+   `npm run check:art` after any change to the gallery.
+5. `site.url` and the Open Graph tags in `index.html` need the real domain.
+6. The site is English-only by decision. If a second language is ever wanted, the shape
    to reach for is `{ en, ja }` per value in `src/data/site.ts` plus a small accessor —
    a change to the data layer, not a rebuild.

@@ -122,29 +122,9 @@
   color: var(--text-subtle);
 }
 
-.status {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--text-2xl);
-  font-weight: var(--weight-bold);
-  color: var(--text);
-}
 
-.statusDot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: var(--text-subtle);
-}
 
-.statusDot[data-status='Open'] {
-  background-color: var(--status-open);
-}
 
-.statusDot[data-status='Waitlist'] {
-  background-color: var(--status-waitlist);
-}
 
 .panelBody {
   max-width: 42ch;

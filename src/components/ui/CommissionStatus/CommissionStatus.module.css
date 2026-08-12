@@ -1,0 +1,36 @@
+.value {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--text);
+}
+
+/*
+ * The fallback is a sentence, not a one-word verdict, so it drops to body scale
+ * — kept at 2xl/bold it shouted louder than the status it replaced. Full-weight
+ * `--text` rather than `--text-subtle`: it sits on the tinted About card, where
+ * the subtle token is the one that gets close to the AA floor.
+ */
+.stale {
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  color: var(--text);
+  text-wrap: balance;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  /* Fallback for any status without an explicit colour below. */
+  background-color: var(--text-subtle);
+}
+.dot[data-status='Open'] {
+  background-color: var(--status-open);
+}
+.dot[data-status='Waitlist'] {
+  background-color: var(--status-waitlist);
+}

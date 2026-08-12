@@ -34,6 +34,21 @@
   transform: scale(1.05);
 }
 
+/**
+ * Pixel art must never be smoothed. The browser's default interpolation blurs
+ * exactly the hard edges that define the medium — at 384px source it turns the
+ * artwork to mush the moment it is drawn at any other size.
+ */
+.cell[data-category='pixel-art'] .image {
+  image-rendering: pixelated;
+}
+
+/* Same reason: a 1.05 hover zoom resamples every pixel at a fractional scale.
+   Pixel pieces keep the tile lift and drop the zoom. */
+.cell[data-category='pixel-art'] .tile:hover .image {
+  transform: none;
+}
+
 /* Tint plus an expand cue, so it is obvious the tile opens something. */
 .overlay {
   position: absolute;

@@ -1,9 +1,9 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import { pages, site } from '@/data/site'
+import { commissions, pages, site } from '@/data/site'
 import { primarySocial } from '@/data/socials'
 import { useDocumentTitle } from '@/hooks/useDocumentTitle'
 import { fadeUp, VIEWPORT } from '@/lib/motion'
-import { Button, Container, RevealText } from '@/components/ui'
+import { Button, CommissionStatus, Container, RevealText } from '@/components/ui'
 import { Blob } from '@/components/ui/Ornament/Ornament'
 import portraitImage from '@/assets/kuraiPfp.png'
 import styles from './AboutPage.module.css'
@@ -82,15 +82,8 @@ export function AboutPage() {
           </motion.div>
 
           <motion.div className={styles.statusCard} {...reveal}>
-            <p className={styles.statusLabel}>Commissions</p>
-            <p className={styles.statusValue}>
-              <span
-                className={styles.statusDot}
-                data-status={site.commissionStatus}
-                aria-hidden="true"
-              />
-              {site.commissionStatus}
-            </p>
+            <p className={styles.statusLabel}>{commissions.label}</p>
+            <CommissionStatus />
             <Button href={primarySocial.href} variant="solid" withArrow className={styles.cta}>
               Commission on {primarySocial.label}
             </Button>

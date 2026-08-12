@@ -34,7 +34,8 @@ export const artworks: readonly Artwork[] = [
     cover: {
       src: '/art/gallery/blancIllustration.webp',
       alt: 'Blond character with brown animal ears and dark brow markings, eyes closed and blushing, resting a finger against their chin, wearing a white shirt with brown suspenders against a sage green background.',
-      aspect: '2048 / 3048',
+      width: 2048,
+      height: 3048,
     },
   },
   {
@@ -46,7 +47,8 @@ export const artworks: readonly Artwork[] = [
     cover: {
       src: '/art/gallery/bubbleIllustration.webp',
       alt: 'Character with a dark blue bob and blue eyes touching their cheek, wearing a white camisole, against a blue-to-yellow background filled with soap bubbles.',
-      aspect: '2480 / 3508',
+      width: 2480,
+      height: 3508,
     },
   },
   {
@@ -57,7 +59,8 @@ export const artworks: readonly Artwork[] = [
     cover: {
       src: '/art/gallery/calebIllustration.webp',
       alt: 'Black-haired character with violet eyes smiling and blushing, wearing a blue sweater with a red apple patch, against an orange background framed by a dashed white border.',
-      aspect: '2000 / 2500',
+      width: 2000,
+      height: 2500,
     },
   },
   {
@@ -69,7 +72,8 @@ export const artworks: readonly Artwork[] = [
     cover: {
       src: '/art/gallery/elfIllustration.webp',
       alt: 'Green-haired elf shown in profile with eyes closed, a gold cuff on one pointed ear, wearing a lavender fur-trimmed garment, with green leaves drifting past.',
-      aspect: '2480 / 3508',
+      width: 2480,
+      height: 3508,
     },
   },
   {
@@ -80,7 +84,8 @@ export const artworks: readonly Artwork[] = [
     cover: {
       src: '/art/gallery/lumineIllustration.webp',
       alt: 'Blond character with a pale blue flower hairpin winking, wearing a white and brown sleeveless top, with a small blue heart beside them.',
-      aspect: '1080 / 1080',
+      width: 1080,
+      height: 1080,
     },
   },
   {
@@ -91,7 +96,8 @@ export const artworks: readonly Artwork[] = [
     cover: {
       src: '/art/gallery/masukattoIllustration.webp',
       alt: 'Green-haired character in a green sweater vest over a collared shirt, against a white background scattered with green grapes.',
-      aspect: '3000 / 4000',
+      width: 3000,
+      height: 4000,
     },
   },
   {
@@ -102,7 +108,8 @@ export const artworks: readonly Artwork[] = [
     cover: {
       src: '/art/gallery/neroIllustration.webp',
       alt: 'White-haired character with dark skin and red eyes, wearing a black top with a brush-lettered graphic, a silver chain, and a white fur-trimmed jacket, against a deep pink background.',
-      aspect: '2000 / 2500',
+      width: 2000,
+      height: 2500,
     },
   },
   {
@@ -113,7 +120,8 @@ export const artworks: readonly Artwork[] = [
     cover: {
       src: '/art/gallery/quincyIllustration.webp',
       alt: 'Aqua-haired character with violet eyes holding both hands to their cheeks in surprise, wearing a blue ruffled dress, against a black background with gold stars.',
-      aspect: '2480 / 3508',
+      width: 2480,
+      height: 3508,
     },
   },
   {
@@ -124,7 +132,8 @@ export const artworks: readonly Artwork[] = [
     cover: {
       src: '/art/gallery/rafayelIlustration.webp',
       alt: 'Character with purple hair, pink highlights and blue eyes smiling gently, wearing a white pinstriped shirt, against a lavender background.',
-      aspect: '1600 / 2000',
+      width: 1600,
+      height: 2000,
     },
   },
   {
@@ -135,7 +144,8 @@ export const artworks: readonly Artwork[] = [
     cover: {
       src: '/art/gallery/ringoIllustration.webp',
       alt: 'Red-haired character with green eyes and bear ears grinning, wrapped in an apple-patterned cape, against a background of apple slices.',
-      aspect: '721 / 897',
+      width: 721,
+      height: 897,
     },
   },
 
@@ -148,7 +158,8 @@ export const artworks: readonly Artwork[] = [
     cover: {
       src: '/art/gallery/chibikurai.webp',
       alt: 'Chibi of Hellane Kurai with long purple hair, round green glasses and a red santa hat.',
-      aspect: '512 / 512',
+      width: 512,
+      height: 512,
     },
   },
   {
@@ -159,7 +170,8 @@ export const artworks: readonly Artwork[] = [
     cover: {
       src: '/art/gallery/chibinookie.webp',
       alt: 'Chibi with short brown hair wearing a red santa hat and a gingerbread-patterned sweater.',
-      aspect: '512 / 512',
+      width: 512,
+      height: 512,
     },
   },
   {
@@ -170,7 +182,8 @@ export const artworks: readonly Artwork[] = [
     cover: {
       src: '/art/gallery/chibivic.webp',
       alt: 'Chibi with black hair and reindeer antlers wearing a blue winter cape.',
-      aspect: '512 / 512',
+      width: 512,
+      height: 512,
     },
   },
   {
@@ -183,7 +196,8 @@ export const artworks: readonly Artwork[] = [
     cover: {
       src: '/art/gallery/chibiOri.webp',
       alt: 'Chibi with long black hair and gold hoop earrings, wearing a red santa hat and a red strawberry-patterned top.',
-      aspect: '512 / 512',
+      width: 512,
+      height: 512,
     },
   },
   {
@@ -194,7 +208,8 @@ export const artworks: readonly Artwork[] = [
     cover: {
       src: '/art/gallery/chibi_valentine_vicandori.webp',
       alt: "Valentine's illustration: two chibis labelled Vick and auwii inside a red heart frame, with otter mascots holding fish beneath a blue ribbon.",
-      aspect: '2000 / 2000',
+      width: 2000,
+      height: 2000,
     },
   },
 
@@ -207,7 +222,8 @@ export const artworks: readonly Artwork[] = [
     cover: {
       src: '/art/gallery/elfPixel.webp',
       alt: 'Pixel-art close-up of a green-haired elf with long pink pointed ears, gold ear cuffs and blushing cheeks.',
-      aspect: '1760 / 990',
+      width: 1760,
+      height: 990,
     },
   },
   {
@@ -218,7 +234,8 @@ export const artworks: readonly Artwork[] = [
     cover: {
       src: '/art/gallery/kuraiPixel.webp',
       alt: 'Pixel-art portrait of Hellane Kurai with purple hair, round glasses, a black choker with a blue gem, and a green top.',
-      aspect: '768 / 384',
+      width: 768,
+      height: 384,
     },
   },
   {
@@ -229,7 +246,8 @@ export const artworks: readonly Artwork[] = [
     cover: {
       src: '/art/gallery/kukuraiii-pixel.png',
       alt: 'Pixel-art portrait of Hellane Kurai with cat ears and a striped tail, making a peace sign, wearing a green hoodie.',
-      aspect: '768 / 768',
+      width: 768,
+      height: 768,
     },
   },
   {
@@ -241,7 +259,8 @@ export const artworks: readonly Artwork[] = [
     cover: {
       src: '/art/gallery/nookie-dog-pixel.png',
       alt: 'Pixel-art portrait of a character with black hair and orange side sections, wearing a red top.',
-      aspect: '780 / 778',
+      width: 780,
+      height: 778,
     },
   },
   {
@@ -252,7 +271,8 @@ export const artworks: readonly Artwork[] = [
     cover: {
       src: '/art/gallery/nookie-pixel.png',
       alt: 'Pixel-art portrait of a freckled character with black hair smiling, wearing a blue shirt, with the name Nookie written beside them.',
-      aspect: '384 / 384',
+      width: 384,
+      height: 384,
     },
   },
 ]
