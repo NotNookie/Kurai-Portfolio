@@ -27,8 +27,16 @@ export const site = {
     'Portfolio of Hellane Kurai, digital artist — rendered illustrations, pixel art, chibis, plus commission information.',
   /** Set once the domain is live; used for canonical and share URLs. */
   url: '',
-  /** Set to null to hide the direct-contact block on the Contact page. */
-  email: 'kuraihellane@gmail.com' as string | null,
+  /**
+   * Stored in halves on purpose. Written whole, the address would sit in the
+   * shipped JS as a literal that any scraper's /\S+@\S+/ matches on sight; kept
+   * apart, there is no such string anywhere in the build. It is joined at
+   * render time by `getEmail()` in `src/lib/email.ts` — read it before changing
+   * this shape, and never reassemble the two halves in a data file.
+   *
+   * Set to null to hide the direct-contact block on the Contact page entirely.
+   */
+  email: { user: 'kuraihellane', domain: 'gmail.com' } as EmailParts | null,
   /**
    * TODO(kurai): update `value` AND `asOf` together whenever your availability
    * changes. `asOf` is the date you last confirmed it, in YYYY-MM-DD.
@@ -43,6 +51,12 @@ export const site = {
   },
   copyrightStartYear: 2024,
 } as const
+
+/** An address held in halves so it never appears whole. See `site.email`. */
+export interface EmailParts {
+  readonly user: string
+  readonly domain: string
+}
 
 export type CommissionStatus = 'Open' | 'Waitlist' | 'Closed'
 
@@ -132,6 +146,11 @@ export const pages = {
       'Slots, pricing, and terms of service live on VGen.',
     elsewhereHeading: 'Elsewhere',
     directHeading: 'Direct inquiries',
+    /**
+     * Stands in for the address until the visitor hovers, focuses or taps it —
+     * the address is not in the page until then. See `EmailLink`.
+     */
+    emailPlaceholder: 'Reveal email address',
   },
   notFound: {
     title: 'Not found',

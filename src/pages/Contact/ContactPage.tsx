@@ -1,8 +1,16 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import { pages, site } from '@/data/site'
+import { pages } from '@/data/site'
 import { primarySocial, socialsFor } from '@/data/socials'
+import { hasEmail } from '@/lib/email'
 import { useDocumentTitle } from '@/hooks/useDocumentTitle'
-import { Button, CommissionStatus, Container, Icon, RevealText } from '@/components/ui'
+import {
+  Button,
+  CommissionStatus,
+  Container,
+  EmailLink,
+  Icon,
+  RevealText,
+} from '@/components/ui'
 import { Blob, DotField } from '@/components/ui/Ornament/Ornament'
 import styles from './ContactPage.module.css'
 
@@ -22,6 +30,10 @@ export function ContactPage() {
   const reduceMotion = useReducedMotion()
 
   const elsewhere = socialsFor('contact').filter((social) => !social.primary)
+
+  // Only whether an address exists — EmailLink assembles the address itself,
+  // and only once the visitor reaches for it.
+  const showEmail = hasEmail()
 
   const fade = (delay: number) => ({
     initial: { opacity: 0, y: reduceMotion ? 0 : 18 },
@@ -48,12 +60,11 @@ export function ContactPage() {
           </RevealText>
           <p className={styles.introText}>{pages.contact.intro}</p>
 
-          {site.email ? (
+          {showEmail ? (
             <div className={styles.direct}>
               <h2 className={styles.blockLabel}>{pages.contact.directHeading}</h2>
-              <a href={`mailto:${site.email}`} className={styles.email}>
-                {site.email}
-              </a>
+              {/* Kept out of the DOM until interaction — see EmailLink. */}
+              <EmailLink className={styles.email} />
             </div>
           ) : null}
         </motion.div>

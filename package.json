@@ -10,7 +10,8 @@
     "check:art": "node scripts/check-art.mjs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check:email": "node scripts/check-email.mjs"
   },
   "dependencies": {
     "@fontsource-variable/outfit": "^5.3.0",

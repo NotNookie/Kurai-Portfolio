@@ -10,6 +10,7 @@ npm run build      # typecheck + production build to dist/
 npm run typecheck  # tsc only
 npm run lint       # eslint
 npm run check:art  # artwork data vs files on disk
+npm run check:email # no harvestable address in the source or build
 ```
 
 
@@ -133,6 +134,56 @@ The failure is deliberately asymmetric. A stale *"Closed"* costs nothing; a stal
 malformed, or future `asOf` reads as stale rather than as a live claim.
 
 Both pages render `<CommissionStatus />`, so the rule lives in exactly one place.
+
+---
+
+## The contact address
+
+`site.email` is stored in halves:
+
+```ts
+email: { user: 'kuraihellane', domain: 'gmail.com' }
+```
+
+Address harvesters overwhelmingly work by running a regex over fetched text, so the
+address is never written whole. `getEmail()` in `src/lib/email.ts` joins the halves at
+render time, and no complete address exists in the repo or in `dist/`.
+
+**The join must stay a runtime operation.** Bundlers constant-fold literal string
+concatenation — `'a' + '@' + 'b'` really does compile to `'a@b'` — which would undo the
+protection silently. `Array.join` is a method call and survives minification.
+
+Because none of that fails loudly, `npm run check:email` asserts it: it scans `src/`,
+`scripts/` and `dist/` for anything matching an email address and exits 1 on a hit. Run
+it after `npm run build` for full cover, and treat it as a deploy gate.
+
+### Not in the DOM either
+
+Splitting the data defeats crawlers that regex over fetched text, but not one that runs
+the page and reads the rendered DOM. So `<EmailLink>` keeps the address out of the
+document until a real interaction — hover, keyboard focus, or touch — puts it there. At
+rest the page contains only:
+
+```html
+<button type="button" aria-label="Reveal email address">Reveal email address</button>
+```
+
+It is a `<button>`, not an `<a>`, deliberately: an anchor with no `href` is neither
+focusable nor a link, so a keyboard user could never trigger the reveal and the address
+would be unreachable for them. A button is focusable from the start — tab to it and the
+address appears, Enter opens the mail client. Activation navigates to the `mailto:`
+rather than following an href.
+
+The cost is that right-click "copy link address" and open-in-new-tab are gone. The
+address is ordinary selectable text once revealed, so it can still be copied by hand, and
+a `mailto:` was never useful in a new tab.
+
+What none of this stops is a crawler that drives a real browser and dispatches focus or
+pointer events. Nothing client-side can: any reveal a person can trigger, a script can
+trigger too. What it does is raise the cost from "fetch and regex" to "drive a browser
+per page", which is the whole of what is achievable from the client.
+
+Set `email` to `null` to hide the direct-contact block on the Contact page entirely.
 
 ---
 

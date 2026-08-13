@@ -1,0 +1,28 @@
+/*
+ * A button that has to read as a link — the page has an underlined-address
+ * pattern and this is the same affordance, so it should not look like a
+ * control. Inherits type rather than setting it, so the consumer's class still
+ * decides size and colour.
+ */
+.email {
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid var(--border-strong);
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  /* Once revealed the address should be selectable, so it can be copied by
+     hand — right-click "copy link address" is not available on a button. */
+  user-select: text;
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+.email:hover,
+.email:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+}
