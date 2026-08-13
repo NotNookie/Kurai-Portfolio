@@ -27,8 +27,8 @@ export const site = {
     'Portfolio of Hellane Kurai, digital artist — rendered illustrations, pixel art, chibis, plus commission information.',
   /** Set once the domain is live; used for canonical and share URLs. */
   url: '',
-  // TODO(kurai): public contact address, or leave null to hide it entirely.
-  email: null as string | null,
+  /** Set to null to hide the direct-contact block on the Contact page. */
+  email: 'kuraihellane@gmail.com' as string | null,
   /**
    * TODO(kurai): update `value` AND `asOf` together whenever your availability
    * changes. `asOf` is the date you last confirmed it, in YYYY-MM-DD.
