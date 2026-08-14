@@ -14,11 +14,10 @@ import { site } from '@/data/site'
  * is not folded, so it survives minification. `npm run check:email` asserts
  * exactly that against the built files.
  *
- * What this does not stop is a crawler that executes JavaScript and reads the
- * rendered DOM. That is a far more expensive crawl than most harvesters run,
- * and defeating it costs real usability — the address would have to stay out of
- * the DOM until a click, which breaks middle-click, "copy link", and anyone
- * navigating with the keyboard.
+ * That alone would not stop a crawler that runs the page and reads the rendered
+ * DOM, so `EmailLink` keeps the address out of the document until a real
+ * interaction puts it there. This module is only the assembler; the reveal and
+ * its trade-offs are documented there.
  */
 export function getEmail(): string | null {
   const parts = site.email

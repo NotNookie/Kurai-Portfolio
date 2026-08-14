@@ -21,7 +21,19 @@
       property="og:description"
       content="Portfolio of Hellane Kurai, digital artist — rendered illustrations, pixel art, chibis, plus commission information."
     />
-    <meta property="og:image" content="/art/gallery/sakura-drift.png" />
+    <!--
+      Lives in public/ rather than src/assets/ on purpose: Vite hashes asset
+      filenames, and this path has to stay stable for crawlers. It is a copy of
+      the VGen cover art, 1920x1080 — close to the 1.91:1 platforms prefer.
+      Declaring the size lets them lay the card out before fetching it.
+    -->
+    <meta property="og:image" content="/og-image.webp" />
+    <meta property="og:image:width" content="1920" />
+    <meta property="og:image:height" content="1080" />
+    <meta
+      property="og:image:alt"
+      content="Cover artwork by Hellane Kurai — a rendered anime-style illustration."
+    />
     <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>

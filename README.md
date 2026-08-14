@@ -19,11 +19,12 @@ npm run check:email # no harvestable address in the source or build
 ```
 public/
   art/gallery/           every gallery image        ← drop files here
+  favicon.png            tab icon and apple-touch-icon
+  og-image.webp          link-preview image; path must stay stable (unhashed)
 src/
   assets/                brand images, hashed by Vite
-                           kuraiCover.png  hero background (vgen cover art)
+                           kuraiCover.webp hero background (vgen cover art)
                            kuraiPfp.png    avatar, used as the nav mark
-                           drawing.png     decorative chibi
   data/                  ★ ALL CONTENT — the only files Kurai needs to edit
     site.ts                copy: nav, hero, page headings, about, contact, viewer
     artworks.ts            the whole gallery, one flat list
@@ -103,8 +104,10 @@ image does not exist, or whose declared dimensions are wrong, without complaint.
 
 It checks that every referenced image exists, every file on disk is referenced, slugs are
 unique, `width`/`height` match the file's real pixel dimensions exactly, alt text is
-present and is not just the title repeated, and filenames are deploy-safe (no spaces,
-lowercase extension).
+present and is not just the title repeated, filenames are deploy-safe (no spaces,
+lowercase extension), and every static asset referenced from `index.html` (favicon,
+og:image) actually exists — that last one is invisible otherwise, and is how og:image
+came to point at a placeholder deleted months earlier.
 
 Dimensions are read straight from the PNG/WebP/JPEG/GIF headers, so it has no
 dependencies. It exits non-zero on any error and can gate a deploy; warnings (an
@@ -347,7 +350,10 @@ wrong.
    `year`, two are titled by guess ("Bubbles", "Elf"), "Nookie Dog" is named off its
    filename, and `chibiOri.webp` is signed *auwii* — confirm whose it is. Run
    `npm run check:art` after any change to the gallery.
-5. `site.url` and the Open Graph tags in `index.html` need the real domain.
+5. **`site.url` is empty, so link previews are still incomplete.** The og:image now
+   exists (`public/og-image.webp`, a copy of the cover art at a stable unhashed path),
+   but `og:image` and `og:url` are root-relative and most platforms need absolute URLs.
+   Set `site.url` and make these absolute before sharing the site anywhere.
 6. The site is English-only by decision. If a second language is ever wanted, the shape
    to reach for is `{ en, ja }` per value in `src/data/site.ts` plus a small accessor —
    a change to the data layer, not a rebuild.

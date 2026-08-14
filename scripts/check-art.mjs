@@ -13,6 +13,7 @@
  *   4. Declared `width`/`height` match the file's real pixel dimensions.
  *   5. Alt text is present and is not just the title repeated.
  *   6. Filenames are deploy-safe (no spaces, lowercase extension).
+ *   7. Static asset paths in index.html resolve (favicon, og:image).
  *
  * Dimensions are read straight from the image headers, so this needs no
  * dependencies and runs anywhere Node does.
@@ -214,6 +215,31 @@ for (const file of onDisk) {
   if (/\s/.test(name)) err(`filename contains a space (needs URL-encoding): ${name}`)
   if (extname(name) !== extname(name).toLowerCase()) {
     err(`uppercase extension breaks on case-sensitive hosts: ${name}`)
+  }
+}
+
+/*
+ * 7 — static assets referenced from index.html.
+ *
+ * These are invisible failures: nothing in the build resolves them, so a
+ * favicon or og:image pointing at a deleted file ships happily and only shows
+ * up as a blank link preview weeks later. That is exactly how og:image came to
+ * reference a placeholder that had been deleted with the rest of them.
+ */
+const ASSET_EXT = ['.png', '.webp', '.jpg', '.jpeg', '.gif', '.svg', '.ico']
+const html = readFileSync(join(ROOT, 'index.html'), 'utf8')
+
+for (const m of html.matchAll(/(?:href|src|content)="(\/[^"]+)"/g)) {
+  const ref = m[1]
+  // /src/* is the dev entry, rewritten by Vite at build time — not a real file
+  // in public/.
+  if (ref.startsWith('/src/')) continue
+  if (!ASSET_EXT.includes(extname(ref).toLowerCase())) continue
+
+  try {
+    if (!statSync(join(PUBLIC, ref.replace(/^\//, ''))).isFile()) throw new Error()
+  } catch {
+    err(`index.html references a file that does not exist: ${ref}`)
   }
 }
 
