@@ -11,7 +11,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
-    "check:email": "node scripts/check-email.mjs"
+    "check:email": "node scripts/check-email.mjs",
+    "art:watermark": "node scripts/watermark.mjs"
   },
   "dependencies": {
     "@fontsource-variable/outfit": "^5.3.0",
@@ -30,6 +31,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.3",
     "globals": "^17.7.0",
+    "sharp": "^0.35.3",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.65.0",
     "vite": "^8.2.0"

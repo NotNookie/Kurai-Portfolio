@@ -31,6 +31,11 @@
   height: 100%;
   opacity: 0;
   transition: opacity var(--duration-slow) var(--ease-out);
+  /* Pairs with the JS handlers: stops the iOS press-and-hold save sheet and
+     drag-select. A deterrent, not a protection — see the note in ArtImage. */
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .frame[data-loaded='true'] .image {

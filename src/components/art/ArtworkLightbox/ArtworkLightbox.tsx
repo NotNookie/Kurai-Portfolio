@@ -241,6 +241,8 @@ export function ArtworkLightbox({
                 className={styles.art}
                 // Drives `image-rendering` — pixel art must not be smoothed.
                 data-category={active.category}
+                // Same casual-copy deterrent as the grid — see ArtImage.
+                onContextMenu={(event) => event.preventDefault()}
                 draggable={false}
                 /**
                  * While morphing, the shared-layout projection owns the

@@ -35,6 +35,15 @@
       content="Cover artwork by Hellane Kurai — a rendered anime-style illustration."
     />
     <meta name="twitter:card" content="summary_large_image" />
+
+    <!--
+      Opt out of generative-AI training. `noai` / `noimageai` are the convention
+      DeviantArt introduced and other platforms picked up; `robots` carries the
+      standard directives. Like public/robots.txt this is a declaration of
+      intent that compliant crawlers honour, not an enforcement mechanism.
+    -->
+    <meta name="robots" content="index, follow, noai, noimageai" />
+    <meta name="ai-content-declaration" content="human-authored" />
   </head>
   <body>
     <div id="root"></div>

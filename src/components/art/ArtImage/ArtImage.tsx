@@ -69,6 +69,19 @@ export function ArtImage({
         fetchPriority={priority ? 'high' : 'auto'}
         decoding={priority ? 'sync' : 'async'}
         sizes={sizes}
+        /*
+         * Casual-copy deterrents, deliberately scoped to artwork rather than
+         * the page: suppressing the context menu everywhere is hostile, and
+         * breaks ordinary things like copying a link or opening one in a tab.
+         *
+         * Worth being clear that this is a speed bump and nothing more. The
+         * file is still in the network tab, still in view-source, and still on
+         * screen for a screenshot. It stops an idle right-click → Save, which
+         * is most of what casual reposting actually is.
+         */
+        onContextMenu={(event) => event.preventDefault()}
+        onDragStart={(event) => event.preventDefault()}
+        draggable={false}
         onLoad={() => setLoaded(true)}
         // A cached image can finish before React attaches onLoad; catch that
         // case on mount so the fade-in cannot get stuck at opacity 0.
