@@ -170,3 +170,67 @@ a {
     background: var(--accent);
   }
 }
+
+/* --------------------------------------------------------------- printing */
+/**
+ * Artwork is withheld from print and PDF export.
+ *
+ * "Save as PDF" is not a separate feature — it renders through the browser's
+ * print pipeline. So a print stylesheet covers Ctrl+P, the browser menu's Print
+ * *and* Save-as-PDF in one go, which is more than intercepting keystrokes could
+ * do: JavaScript can swallow Ctrl+P, but nothing reaches the menu item.
+ *
+ * Each image is replaced in place by an attribution card, so a printed page
+ * still reads as a portfolio rather than a broken layout, and still says whose
+ * work is missing and where to find it.
+ *
+ * This does not touch "Save page as" (Ctrl+S), which writes the files straight
+ * to disk without rendering. Nothing client-side can stop that — though what it
+ * saves is the watermarked copy.
+ */
+@media print {
+  img[data-artwork] {
+    display: none !important;
+  }
+
+  /* The frame stays, so the page keeps its shape where art used to be. */
+  [data-loaded]:has(img[data-artwork]) {
+    position: relative;
+    min-height: 8rem;
+    border: 1px dashed #999;
+    border-radius: 4px;
+    background: none !important;
+  }
+
+  [data-loaded]:has(img[data-artwork])::after {
+    content: 'Artwork © Hellane Kurai — view at the portfolio. Not licensed for redistribution.';
+    position: absolute;
+    inset: 0;
+    /* This is the same pseudo-element the loading shimmer paints on, so its
+       gradient has to be cleared or it prints behind the text. */
+    background: none !important;
+    animation: none !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    font-size: 10pt;
+    line-height: 1.4;
+    text-align: center;
+    color: #333;
+  }
+
+  /* The shimmer placeholder would otherwise print as a grey slab. */
+  [data-loaded]::before,
+  [data-loaded]::after {
+    animation: none !important;
+  }
+
+  /* Decoration costs ink and says nothing on paper. */
+  [class*='blob'],
+  [class*='Blob'],
+  [class*='dotField'],
+  [class*='DotField'] {
+    display: none !important;
+  }
+}

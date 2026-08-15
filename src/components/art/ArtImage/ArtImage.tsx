@@ -79,6 +79,8 @@ export function ArtImage({
          * screen for a screenshot. It stops an idle right-click → Save, which
          * is most of what casual reposting actually is.
          */
+        // Hook for the print stylesheet — see global.css.
+        data-artwork="true"
         onContextMenu={(event) => event.preventDefault()}
         onDragStart={(event) => event.preventDefault()}
         draggable={false}

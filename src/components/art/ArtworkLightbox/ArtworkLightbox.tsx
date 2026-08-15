@@ -242,6 +242,7 @@ export function ArtworkLightbox({
                 // Drives `image-rendering` — pixel art must not be smoothed.
                 data-category={active.category}
                 // Same casual-copy deterrent as the grid — see ArtImage.
+                data-artwork="true"
                 onContextMenu={(event) => event.preventDefault()}
                 draggable={false}
                 /**
