@@ -123,8 +123,8 @@ export const pages = {
     lede: 'I draw characters — the kind people want to keep as a profile picture for years.',
     // TODO(kurai): your real bio. One string per paragraph, add as many as you like.
     body: [
-      'Replace this paragraph with how you got started and what you like drawing most.',
-      'Replace this paragraph with the kind of work you take on, and anything a prospective client should know before reaching out.',
+      "I got into drawing because of my big brother. He always likes to doodle characters from Adventure Time and anime that he watched. I like drawing... probably just any character that I'm fond of~!",
+      "I am a digital artist and I love art it's basically my life and career, I mostly do headshots to bust-up size. For my future clients I am still learning and would like to keep improving my art so if there's any adjustments you'd like to change just gladly tell me. Though if the pose is approved on the sketch process there will be a fee if you suddenly change your mind.",
     ],
     // TODO(kurai): your actual tools — delete any you do not use.
     toolkit: ['Krita', 'Aseprite'],
