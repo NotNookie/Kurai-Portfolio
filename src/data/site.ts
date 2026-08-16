@@ -130,7 +130,7 @@ export const pages = {
     // TODO(kurai): your actual tools — delete any you do not use.
     toolkit: ['Krita', 'Aseprite'],
     // TODO(kurai): delete this block entirely if you would rather not list one.
-    services: ['Rendered illustrations', 'Pixel art', 'Sketching', 'Chibis'],
+    services: ['Rendered illustrations', 'Pixel art', 'Sketching', 'Chibis', 'Skeb'],
     servicesHeading: 'Services',
     toolkitHeading: 'Toolkit',
   },
