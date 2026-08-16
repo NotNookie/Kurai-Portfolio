@@ -124,7 +124,8 @@ export const pages = {
     // TODO(kurai): your real bio. One string per paragraph, add as many as you like.
     body: [
       "I got into drawing because of my big brother. He always likes to doodle characters from Adventure Time and anime that he watched. I like drawing... probably just any character that I'm fond of~!",
-      "I am a digital artist and I love art it's basically my life and career, I mostly do headshots to bust-up size. For my future clients I am still learning and would like to keep improving my art so if there's any adjustments you'd like to change just gladly tell me. Though if the pose is approved on the sketch process there will be a fee if you suddenly change your mind.",
+      "I am a digital artist and I love art it's basically my life and career, I mostly do headshots to bust-up size.",
+      "For my future clients I am still learning and would like to keep improving my art so if there's any adjustments you'd like to change just gladly tell me. Though if the pose is approved on the sketch process there will be a fee if you suddenly change your mind.",
     ],
     // TODO(kurai): your actual tools — delete any you do not use.
     toolkit: ['Krita', 'Aseprite'],

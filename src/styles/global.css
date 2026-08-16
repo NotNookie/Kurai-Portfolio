@@ -1,5 +1,7 @@
 /* Self-hosted variable font — no external requests, no FOUT. */
-@import '@fontsource-variable/outfit';
+@import '@fontsource-variable/nunito';
+@import '@fontsource-variable/fredoka';
+@import '@fontsource-variable/baloo-2';
 
 @import './tokens.css';
 
@@ -75,6 +77,8 @@ h1,
 h2,
 h3,
 h4 {
+  /* The bubbly face lives here and nowhere else — short, large text only. */
+  font-family: var(--font-display);
   font-weight: var(--weight-semibold);
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-tight);

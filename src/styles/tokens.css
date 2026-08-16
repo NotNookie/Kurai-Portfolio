@@ -54,8 +54,22 @@
    * One family. Hierarchy comes from weight and size, not from a contrasting
    * display face — that is what keeps the tone pop-cute rather than editorial.
    */
-  --font-sans: 'Outfit Variable', ui-rounded, 'Segoe UI', system-ui, sans-serif;
-  --font-display: var(--font-sans);
+  /*
+   * Two families, on purpose. Nunito has rounded terminals so it belongs to the
+   * same soft world as the display face, but it is drawn for reading — the bio
+   * is the longest text on the site and a fully bubbly face at paragraph length
+   * is what makes a block look like a wall.
+   */
+  --font-sans: 'Nunito Variable', ui-rounded, 'Segoe UI', system-ui, sans-serif;
+  /* Headings and other short, large text only. Never body copy. */
+  --font-display: 'Fredoka Variable', var(--font-sans);
+  /*
+   * The bubbly voice, for text with real personality behind it. Baloo is much
+   * rounder and heavier than Nunito but is drawn as a text face with proper
+   * weights, so unlike a true display face it survives a few paragraphs. It is
+   * still not a body default — reserve it for short, deliberate passages.
+   */
+  --font-round: 'Baloo 2 Variable', var(--font-display);
 
   --text-2xs: 0.6875rem;
   --text-xs: 0.75rem;

@@ -2,7 +2,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { commissions, pages, site } from '@/data/site'
 import { primarySocial } from '@/data/socials'
 import { useDocumentTitle } from '@/hooks/useDocumentTitle'
-import { fadeUp, VIEWPORT } from '@/lib/motion'
+import { fadeUp, staggerChild, staggerParent, VIEWPORT } from '@/lib/motion'
 import { Button, CommissionStatus, Container, RevealText } from '@/components/ui'
 import { Blob } from '@/components/ui/Ornament/Ornament'
 import portraitImage from '@/assets/kuraiPfp.png'
@@ -73,11 +73,28 @@ export function AboutPage() {
             <figcaption className={styles.portraitName}>{site.name}</figcaption>
           </motion.figure>
 
-          <motion.div className={styles.bubble} {...reveal}>
-            {pages.about.body.map((paragraph) => (
-              <p key={paragraph} className={styles.paragraph}>
+          {/*
+            A chat thread rather than one card. Each paragraph is its own
+            message, so the bio arrives in readable pieces instead of a slab —
+            and only the first carries a tail, which is what makes the portrait
+            beside it read as the sender.
+          */}
+          <motion.div
+            className={styles.thread}
+            variants={staggerParent(reduceMotion ?? false, 0.12)}
+            initial="hidden"
+            whileInView="visible"
+            viewport={VIEWPORT}
+          >
+            {pages.about.body.map((paragraph, index) => (
+              <motion.p
+                key={paragraph}
+                className={styles.message}
+                data-first={index === 0 ? 'true' : undefined}
+                variants={staggerChild(reduceMotion ?? false, 14)}
+              >
                 {paragraph}
-              </p>
+              </motion.p>
             ))}
           </motion.div>
 

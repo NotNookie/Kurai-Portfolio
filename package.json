@@ -15,7 +15,9 @@
     "art:watermark": "node scripts/watermark.mjs"
   },
   "dependencies": {
-    "@fontsource-variable/outfit": "^5.3.0",
+    "@fontsource-variable/baloo-2": "^5.3.0",
+    "@fontsource-variable/fredoka": "^5.3.0",
+    "@fontsource-variable/nunito": "^5.3.0",
     "framer-motion": "^12.43.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
